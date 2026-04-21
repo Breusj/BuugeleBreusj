@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Buugele — Bronk Breusj</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Fraunces:wght@600&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg:#1a2a5e; --card:#ffffff; --ink:#132050; --ink2:#3a5080; --ink3:#7a90b8;
+  --border:#dde4f5; --green:#4caf7d; --green-bg:#1a3d2e; --green-border:#2d6b4a;
+  --orange:#e8844a; --orange-bg:#3d2010; --orange-border:#7a4020;
+  --blue:#5b8fe8; --blue-bg:#1a2d5e; --blue-border:#3a5aaa;
+  --accent:#ffffff; --radius:10px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Outfit',sans-serif;background:#1a2a5e;color:#1a2a5e;min-height:100vh;padding-bottom:4rem}
+header{background:#132050;color:#ffffff;padding:1.1rem 1rem .8rem;position:sticky;top:0;z-index:100}
+header h1{font-family:'Fraunces',serif;font-size:20px;font-weight:600}
+header p{font-size:11px;color:#8aa0d8;margin-top:2px}
+.prog-wrap{height:3px;background:#2a3a80;margin-top:8px;border-radius:2px;overflow:hidden}
+.prog-fill{height:100%;background:var(--accent);border-radius:2px;transition:width .4s;width:0%}
+.nav{display:flex;background:#132050;border-top:1px solid #2a3a80}
+.nav button{flex:1;padding:8px 4px;font-size:12px;font-weight:600;font-family:'Outfit',sans-serif;
+  color:#8aacdf;background:transparent;border:none;cursor:pointer;letter-spacing:.3px;text-transform:uppercase;border-bottom:2px solid transparent}
+.nav button.on{color:#ffffff;border-bottom-color:#ffffff}
+.page{display:none;padding:.75rem .75rem 0}
+.page.on{display:block}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin-bottom:.75rem}
+.stat{background:#ffffff;border:1px solid #dde4f5;border-radius:var(--radius);padding:.5rem .25rem;text-align:center}
+.stat-n{font-size:19px;font-weight:700}
+.stat-l{font-size:10px;color:#8090b8;margin-top:1px;text-transform:uppercase;letter-spacing:.4px}
+.green{color:var(--green)} .orange{color:var(--orange)} .blue{color:var(--blue)}
+.btn{padding:12px 16px;border:1px solid #dde4f5;border-radius:var(--radius);font-size:15px;
+  font-family:'Outfit',sans-serif;cursor:pointer;background:#ffffff;color:#132050;font-weight:500;
+  min-height:48px;-webkit-tap-highlight-color:transparent}
+.btn:active{opacity:.75}
+.btn.prim{background:#132050;color:#ffffff;border-color:#132050;font-weight:700}
+.btn.danger{color:#b91c1c;border-color:#fecaca}
+.btn.danger:active{background:#fef2f2}
+.pill-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:.75rem;align-items:center}
+.pill-row span{font-size:12px;color:#8090b8}
+.pill{padding:9px 16px;border-radius:20px;border:1px solid #dde4f5;font-size:14px;
+  font-family:'Outfit',sans-serif;cursor:pointer;background:#ffffff;color:#3a5080;
+  min-height:42px;-webkit-tap-highlight-color:transparent}
+.pill:active{opacity:.7}
+.pill.on{background:#132050;color:#ffffff;border-color:#132050}
+.pill.gon{background:var(--green-bg);color:var(--green);border-color:var(--green-border)}
+.pill.oon{background:var(--orange-bg);color:var(--orange);border-color:var(--orange-border)}
+.add-form{background:#ffffff;border:1px solid #dde4f5;border-radius:var(--radius);padding:.9rem;margin-bottom:.75rem}
+.add-form label{font-size:11px;color:var(--ink3);text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:4px}
+.add-form select,.add-form input[type=text]{width:100%;padding:12px 12px;border:1px solid var(--border);
+  border-radius:8px;font-size:16px;font-family:'Outfit',sans-serif;background:#f4f7ff;color:#132050;margin-bottom:10px;
+  min-height:50px;-webkit-appearance:none;appearance:none}
+.add-form select:focus,.add-form input:focus{outline:2px solid var(--accent);border-color:transparent}
+.num-row{display:grid;grid-template-columns:1fr 80px;gap:8px;margin-bottom:10px}
+.num-row select,.num-row input{margin-bottom:0 !important}
+.week-lbl{font-size:11px;color:#8aa0c8;text-transform:uppercase;letter-spacing:.4px;margin:10px 0 5px}
+.dag-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:4px}
+.dag-btn{padding:10px 2px;border:1px solid #dde4f5;border-radius:8px;font-size:11px;font-weight:600;
+  font-family:'Outfit',sans-serif;cursor:pointer;background:#ffffff;color:#3a5080;text-align:center;line-height:1.4;
+  min-height:54px;-webkit-tap-highlight-color:transparent}
+.dag-btn:active{opacity:.7}
+.dag-btn.on{background:#132050;color:#ffffff;border-color:#132050}
+.dag-btn .dn{font-size:16px;font-weight:700;display:block}
+.street-group{margin-bottom:.5rem}
+.street-hdr{display:flex;align-items:center;gap:8px;padding:14px 12px;background:#ffffff;
+  border:1px solid var(--border);border-radius:var(--radius);cursor:pointer;user-select:none;min-height:52px;
+  -webkit-tap-highlight-color:transparent}
+.street-hdr:active{background:#eef2ff}
+.street-nm{font-size:15px;font-weight:600;flex:1}
+.street-prog{font-size:12px;color:var(--ink3)}
+.chev{font-size:11px;color:var(--ink3);transition:transform .15s}
+.chev.open{transform:rotate(90deg)}
+.addr-list{display:none}
+.addr-list.open{display:block}
+.addr-row{display:flex;align-items:center;gap:8px;padding:13px 12px 13px 20px;
+  border-bottom:1px solid var(--border);background:#ffffff;min-height:58px}
+.addr-row:last-child{border-bottom:none;border-radius:0 0 var(--radius) var(--radius)}
+.addr-txt{flex:1;font-size:15px;line-height:1.3}
+.sb{padding:10px 13px;border-radius:20px;border:1px solid var(--border);font-size:13px;font-weight:600;
+  font-family:'Outfit',sans-serif;cursor:pointer;background:transparent;color:var(--ink2);
+  min-height:42px;-webkit-tap-highlight-color:transparent}
+.sb:active{opacity:.7}
+.sb.done{background:var(--green-bg);border-color:var(--green-border);color:var(--green)}
+.sb.away{background:var(--orange-bg);border-color:var(--orange-border);color:var(--orange)}
+.del{padding:10px 10px;border:none;background:transparent;color:var(--ink3);cursor:pointer;font-size:18px;
+  border-radius:8px;min-height:44px;min-width:40px;-webkit-tap-highlight-color:transparent}
+.del:active{background:#fef2f2;color:#b91c1c}
+.empty{text-align:center;padding:2.5rem 1rem;color:var(--ink3);font-size:14px;line-height:1.6}
+.rooster-dag{background:#ffffff;border:1px solid #dde4f5;border-radius:var(--radius);margin-bottom:.5rem;overflow:hidden}
+.rooster-hdr{display:flex;align-items:center;justify-content:space-between;padding:14px 12px;cursor:pointer;user-select:none;min-height:52px;-webkit-tap-highlight-color:transparent}
+.rooster-hdr:active{background:#eef2ff}
+.rooster-title{font-size:15px;font-weight:600}
+.rooster-body{padding:8px 12px;border-top:1px solid #dde4f5;display:none}
+.rooster-body.open{display:block}
+.duo-row{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid #dde4f5}
+.duo-row:last-child{border-bottom:none}
+.duo-naam{font-size:14px;font-weight:600;width:100px;color:var(--ink2);flex-shrink:0}
+.duo-sel{flex:1;padding:10px 10px;border:1px solid var(--border);border-radius:7px;
+  font-size:15px;font-family:'Outfit',sans-serif;background:var(--bg);color:var(--ink);min-height:46px;background:#f4f7ff;color:#132050;
+  -webkit-appearance:none;appearance:none}
+.duo-sel:focus{outline:2px solid var(--accent);border-color:transparent}
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(5,10,40,.75);z-index:200;
+  align-items:center;justify-content:center;padding:1rem}
+.modal-bg.show{display:flex}
+.modal{background:#ffffff;border-radius:14px;padding:1.5rem;max-width:360px;width:100%;border:1px solid #dde4f5}
+.modal h2{font-family:'Fraunces',serif;font-size:19px;margin-bottom:.5rem;color:#1a2a5e}
+.modal p{font-size:14px;color:#3a5080;line-height:1.6;margin-bottom:1.1rem}
+.modal-btns{display:flex;gap:10px;justify-content:flex-end}
+.info-box{background:#ffffff;border:1px solid #dde4f5;border-radius:var(--radius);padding:.75rem;margin-bottom:.5rem}
+.info-box label{font-size:11px;color:var(--ink3);text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:5px}
+.info-box p{font-size:12px;color:#3a5090;line-height:1.7}
+</style>
+</head>
+<body>
+
+<header>
+  <h1 style="display:flex;align-items:center;gap:10px">
+    <svg width="28" height="34" viewBox="0 0 28 34" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- Speerpunt -->
+      <path d="M14 1 L24 14 L14 20 L4 14 Z" stroke="white" stroke-width="1.5" fill="none"/>
+      <!-- JvB tekst -->
+      <text x="14" y="15" text-anchor="middle" font-family="serif" font-size="6" fill="white" font-weight="bold">JvB</text>
+      <!-- Lint links -->
+      <path d="M10 17 C6 18 3 22 5 26" stroke="white" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+      <path d="M5 26 C3 28 4 30 6 29" stroke="white" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+      <!-- Lint rechts -->
+      <path d="M18 17 C22 18 25 22 23 26" stroke="white" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+      <path d="M23 26 C25 28 24 30 22 29" stroke="white" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+      <!-- Steel -->
+      <line x1="14" y1="20" x2="14" y2="34" stroke="white" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+    Buugele — Bronk Breusj
+  </h1>
+  <p id="hdr-sub">Selecteer een dag om te beginnen</p>
+  <div class="prog-wrap"><div class="prog-fill" id="prog"></div></div>
+</header>
+
+<div class="nav">
+  <button class="on" onclick="showPage('adressen')">Adressen</button>
+  <button onclick="showPage('rooster')">Rooster</button>
+  <button onclick="showPage('totaal')">Totaal</button>
+  <button onclick="showPage('beheer')">Beheer</button>
+</div>
+
+<!-- ══ ADRESSEN ══ -->
+<div class="page on" id="page-adressen">
+  <div class="stats" style="margin-top:.75rem">
+    <div class="stat"><div class="stat-n" id="s-tot">0</div><div class="stat-l">Totaal</div></div>
+    <div class="stat"><div class="stat-n green" id="s-done">0</div><div class="stat-l">Gedaan</div></div>
+    <div class="stat"><div class="stat-n orange" id="s-away">0</div><div class="stat-l">Niet thuis</div></div>
+    <div class="stat"><div class="stat-n blue" id="s-todo">0</div><div class="stat-l">Nog open</div></div>
+  </div>
+
+  <div class="add-form">
+    <label>Straat</label>
+    <select id="sel-straat" onchange="updateNrs()">
+      <option value="">— Kies straat —</option>
+    </select>
+    <label>Huisnummer</label>
+    <div class="num-row">
+      <select id="sel-nr"><option value="">— Kies nummer —</option></select>
+      <input type="text" id="inp-toev" placeholder="a / b / c" style="width:100%"/>
+    </div>
+    <label>Duo (vaste rol)</label>
+    <select id="sel-duo">
+      <option value="">— Geen —</option>
+      <option>Kaptejn</option>
+      <option>Luutenant</option>
+      <option>Veendrig</option>
+      <option>Sikkretaoris</option>
+    </select>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:4px">
+      <button class="btn" style="background:var(--green-bg);border-color:var(--green-border);color:var(--green);font-weight:700;font-size:16px" onclick="quickAdd('done')">✓ Gedaan</button>
+      <button class="btn" style="background:var(--orange-bg);border-color:var(--orange-border);color:var(--orange);font-weight:700;font-size:16px" onclick="quickAdd('away')">⌀ Niet thuis</button>
+    </div>
+  </div>
+
+  <div class="pill-row">
+    <span>Toon:</span>
+    <button class="pill on"  onclick="setFilter('all')"  id="f-all">Alles</button>
+    <button class="pill gon" onclick="setFilter('done')" id="f-done">Gedaan</button>
+    <button class="pill oon" onclick="setFilter('away')" id="f-away">Niet thuis</button>
+  </div>
+
+  <div id="addr-list"></div>
+</div>
+
+<!-- ══ ROOSTER ══ -->
+<div class="page" id="page-rooster">
+  <p style="font-size:12px;color:var(--ink3);margin-bottom:.75rem;line-height:1.6">
+    Koppel per dag een Sjtendaor aan elke vaste rol. Elke dag zijn er 4 duo's.
+  </p>
+  <div id="rooster-list"></div>
+</div>
+
+<!-- ══ TOTAALOVERZICHT ══ -->
+<div class="page" id="page-totaal">
+  <div class="stats" style="margin-top:.25rem">
+    <div class="stat"><div class="stat-n" id="t-tot">0</div><div class="stat-l">Totaal</div></div>
+    <div class="stat"><div class="stat-n green" id="t-done">0</div><div class="stat-l">Gedaan</div></div>
+    <div class="stat"><div class="stat-n orange" id="t-away">0</div><div class="stat-l">Niet thuis</div></div>
+    <div class="stat"><div class="stat-n blue" id="t-todo">0</div><div class="stat-l">Te doen</div></div>
+  </div>
+  <div id="rol-stats" style="background:#ffffff;border:1px solid #dde4f5;border-radius:var(--radius);padding:.85rem;margin-top:.6rem;margin-bottom:.6rem">
+    <div style="font-size:11px;color:#8090b8;text-transform:uppercase;letter-spacing:.4px;margin-bottom:.6rem">Adressen per vaste rol</div>
+    <div id="rol-bars"></div>
+  </div>
+  <div class="pill-row" style="margin-top:.75rem">
+    <span>Toon:</span>
+    <button class="pill on" onclick="setTotaalFilter('done')" id="tf-done">Gedaan</button>
+    <button class="pill" onclick="setTotaalFilter('away')" id="tf-away">Niet thuis</button>
+    <button class="pill" onclick="setTotaalFilter('both')" id="tf-both">Beide</button>
+  </div>
+  <div id="totaal-list"></div>
+</div>
+
+<!-- ══ BEHEER ══ -->
+<div class="page" id="page-beheer">
+  <div class="info-box">
+    <label>Nieuw jaar</label>
+    <p>Adressen blijven staan, alle statussen worden teruggezet naar "te doen".</p>
+    <button class="btn danger" style="width:100%;margin-top:8px" onclick="openModal('modal-reset')">↺ Reset alle statussen</button>
+  </div>
+  <div class="info-box">
+    <label>Alles wissen</label>
+    <p>Verwijdert alle adressen, statussen en het rooster volledig van dit apparaat.</p>
+    <button class="btn danger" style="width:100%;margin-top:8px" onclick="openModal('modal-wipe')">⚠ Alles wissen</button>
+  </div>
+  <div class="info-box">
+    <label>Info</label>
+    <p>Data wordt opgeslagen op dit apparaat (localStorage).<br>Elk apparaat heeft zijn eigen lijst.<br>Adressen toevoegen doe je via het tabblad Adressen.</p>
+  </div>
+</div>
+
+<div class="modal-bg" id="modal-reset">
+  <div class="modal">
+    <h2>Nieuw jaar</h2>
+    <p>Alle adressen blijven staan. Alle statussen worden teruggezet naar "te doen".</p>
+    <div class="modal-btns">
+      <button class="btn" onclick="closeModal('modal-reset')">Annuleer</button>
+      <button class="btn prim" onclick="doReset()">Reset</button>
+    </div>
+  </div>
+</div>
+<div class="modal-bg" id="modal-wipe">
+  <div class="modal">
+    <h2>Alles wissen</h2>
+    <p>Dit verwijdert alle data permanent van dit apparaat.</p>
+    <div class="modal-btns">
+      <button class="btn" onclick="closeModal('modal-wipe')">Annuleer</button>
+      <button class="btn danger" onclick="doWipe()">Wis alles</button>
+    </div>
+  </div>
+</div>
+
+
+const STRATEN = {"Achter de Lang Haag":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58],"Basterddikkestraat":[2,4,6,8,10,12,14,16],"Bisschop Eraclesplein":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29],"Breusterstraat":[29,31,33,34,35,36,37,38,39,40,41,42,43,44,54,56,58,60,62,64,66],"Breusterhof":["appartementen"],"Breusterweiden":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40],"Bron":["appartementen"],"Burgermeester Lambertstraat":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46],"Cramignonstraat":[2,4,6,7,8,9,11,13,15,17,19,21,23,25,27,29],"De Bak":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41],"Emmastraat":[2,4,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,62,64,66,68,70,72,74,76,78,80,82,84,86,88],"Hubert Smeetsstraat":[5,7,9,11,12,13,14,15,16,17,18,19,20,21,22],"Irenestraat":[1,2,3,4,5,6,7,8,9,10,11,12],"J.P. Sweelinckstraat":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,38,40,42,44,46,48,50,52,54],"J.S. Bachstraat":[26,28,30,32,34,36,38,40,42,44,46,48,50,52,54,56,58,60,62,64,66,68,70,72,74],"Kennedylaan":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,42,44,46,48,50,52,54,56,58,60,62,64,66,68,70],"Klimmerseind":[1,2,3,4,5,6,7,8,9,10,11,12,14,16,18,20,22,24,26,28,30,32,34],"Koning Willem-Alexanderstraat":["appartementen"],"Kriekenstraat":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15],"Kwetternest":["zie ter plekke"],"M.L. Kingstraat":[14,16,18,26,28,30,32,34,35,36,37,38,39,40,41,43,45,47,49,51,53,55,57,59,61,63,65,67],"Monseigneur Nolensstraat":[1,2,3],"Mozartstraat":[20,22,24,37,39,41,43,45,47,49,51],"Prins Hendrikstraat":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,30,32,34,36,38,40,42,44],"Sint Martinusstraat":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50],"Veldje":[4,5,6,7,8,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,65,66,71,72],"Verdistraat":[19,21,23,38,40,42,44,46,48],"Von Geusauplein":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23]};
+
+const ROLLEN=['Kaptejn','Luutenant','Veendrig','Sikkretaoris'];
+const SJTENDAORS=['Sjtendaor 1','Sjtendaor 2','Sjtendaor 3','Sjtendaor 4','Sjtendaor 5','Sjtendaor 6','Beeld'];
+const DAGEN=[{id:'w1-di',label:'Di',week:1},{id:'w1-wo',label:'Wo',week:1},{id:'w1-do',label:'Do',week:1},{id:'w1-vr',label:'Vr',week:1},{id:'w2-ma',label:'Ma',week:2},{id:'w2-di',label:'Di',week:2},{id:'w2-wo',label:'Wo',week:2},{id:'w2-do',label:'Do',week:2},{id:'w2-vr',label:'Vr',week:2}];
+
+const ROLLEN=['Kaptejn','Luutenant','Veendrig','Sikkretaoris'];
+const SJTENDAORS=['Sjtendaor 1','Sjtendaor 2','Sjtendaor 3','Sjtendaor 4','Sjtendaor 5','Sjtendaor 6','Beeld'];
+
+
+let addrs=[], rooster={}, filter='all', dbReady=false;
+
+
+
+function showPage(n){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('on'));
+  document.getElementById('page-'+n).classList.add('on');
+  document.querySelectorAll('.nav button')[{adressen:0,rooster:1,totaal:2,beheer:3}[n]].classList.add('on');
+  if(n==='totaal')renderTotaal();
+}
+
+
+
+function populateStraten(){
+  const s=document.getElementById('sel-straat');
+  Object.keys(STRATEN).sort().forEach(k=>{
+    const o=document.createElement('option');
+    o.value=k;o.textContent=k;s.appendChild(o);
+  });
+}
+
+function updateNrs(){
+  const st=document.getElementById('sel-straat').value;
+  const s=document.getElementById('sel-nr');
+  s.innerHTML='<option value="">— Kies nummer —</option>';
+  if(!st||!STRATEN[st])return;
+  STRATEN[st].forEach(n=>{
+    const adres=st+' '+n;
+    const bestaand=addrs.find(a=>a.adres===adres||a.adres.startsWith(adres));
+    if(bestaand&&bestaand.status==='done')return; // al gedaan: overslaan
+    const o=document.createElement('option');
+    o.value=n;o.textContent=n;s.appendChild(o);
+  });
+}
+
+function quickAdd(status){
+  const straat=document.getElementById('sel-straat').value;
+  const nr=document.getElementById('sel-nr').value;
+  const toev=document.getElementById('inp-toev').value.trim().toLowerCase();
+  const duo=document.getElementById('sel-duo').value;
+  if(!straat||!nr){
+    // Licht trillen op mobiel als hint
+    const form=document.querySelector('.add-form');
+    form.style.outline='2px solid var(--orange)';
+    setTimeout(()=>form.style.outline='',800);
+    return;
+  }
+  const adres=straat+' '+nr+toev;
+  // Als adres al bestaat op deze dag: update status
+  const existing=addrs.find(a=>a.adres===adres);
+  if(existing){
+    existing.status=status;
+    existing.duo=duo;
+  } else {
+    addrs.push({id:Date.now()+Math.random(),adres,duo,status});
+  }
+  // Reset huisnummer & toevoeging, straat blijft staan voor snel doorklikken
+  document.getElementById('sel-nr').innerHTML='<option value="">— Kies nummer —</option>';
+  // Herlaad nummers zodat straat geselecteerd blijft
+  updateNrs();
+  document.getElementById('inp-toev').value='';
+  save();render();
+}
+
+function setStatus(id,s){
+  const a=addrs.find(x=>x.id===id);
+  if(a){a.status=a.status===s?'todo':s; fbSet('addr_'+id,a);}
+  render();updateNrs();
+}
+function deleteAddr(id){
+  addrs=addrs.filter(x=>x.id!==id);
+  fbDel('addr_'+id);
+  render();updateNrs();
+}
+function setFilter(f){
+  filter=f;
+  document.getElementById('f-all').className='pill'+(f==='all'?' on':'');
+  document.getElementById('f-done').className='pill'+(f==='done'?' gon':'');
+  document.getElementById('f-away').className='pill'+(f==='away'?' oon':'');
+  if(f==='all') document.getElementById('f-all').className='pill on';
+  render();
+}
+
+function render(){
+  const tot=addrs.length,done=addrs.filter(a=>a.status==='done').length,away=addrs.filter(a=>a.status==='away').length,todo=tot-done-away;
+  document.getElementById('s-tot').textContent=tot;
+  document.getElementById('s-done').textContent=done;
+  document.getElementById('s-away').textContent=away;
+  document.getElementById('s-todo').textContent=todo;
+  document.getElementById('prog').style.width=tot?Math.round(done/tot*100)+'%':'0%';
+  document.getElementById('hdr-sub').textContent=tot?Math.round(done/tot*100)+'% gedaan · '+todo+' nog open':'Nog geen adressen ingevoerd';
+
+  const vis=filter==='all'?addrs:addrs.filter(a=>a.status===filter);
+  const cont=document.getElementById('addr-list');
+  if(!vis.length){cont.innerHTML=`<div class="empty">${tot===0?'Nog geen adressen.':'Geen adressen gevonden.'}</div>`;return;}
+
+  const grps={};
+  vis.forEach(a=>{
+    const parts=a.adres.split(' ');
+    const st=parts.length>1?parts.slice(0,-1).join(' '):parts[0];
+    if(!grps[st])grps[st]=[];
+    grps[st].push(a);
+  });
+
+  cont.innerHTML=Object.keys(grps).sort((a,b)=>a.localeCompare(b,'nl')).map(st=>{
+    const items=grps[st];
+    const dc=items.filter(x=>x.status==='done').length;
+    const gid='sg_'+st.replace(/\W/g,'_');
+    return `<div class="street-group">
+      <div class="street-hdr" onclick="tg('${gid}')">
+        <span class="street-nm">${st}</span>
+        <span class="street-prog">${dc}/${items.length}</span>
+        <span class="chev open" id="ch_${gid}">▶</span>
+      </div>
+      <div class="addr-list open" id="${gid}">
+        ${items.map(a=>{
+          const iid=JSON.stringify(a.id);
+          const duoSpan=a.duo?`<span style="font-size:10px;color:var(--ink3);margin-left:4px">${a.duo}</span>`:'';
+          return `<div class="addr-row">
+            <div style="flex:1"><span class="addr-txt">${a.adres}</span>${duoSpan}</div>
+            <div style="display:flex;gap:4px">
+              <button class="sb ${a.status==='done'?'done':''}" onclick="setStatus(${iid},'done')">✓ Gedaan</button>
+              <button class="sb ${a.status==='away'?'away':''}" onclick="setStatus(${iid},'away')">⌀ Niet thuis</button>
+            </div>
+            <button class="del" onclick="deleteAddr(${iid})">✕</button>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function tg(gid){
+  document.getElementById(gid).classList.toggle('open');
+  document.getElementById('ch_'+gid).classList.toggle('open');
+}
+
+function renderRooster(){
+  const cont=document.getElementById('rooster-list');
+  cont.innerHTML=DAGEN.map(d=>{
+    const r=rooster[d.id]||{};
+    const filled=ROLLEN.filter(rol=>r[rol]).length;
+    const rid='rb_'+d.id;
+    return `<div class="rooster-dag">
+      <div class="rooster-hdr" onclick="document.getElementById('${rid}').classList.toggle('open')">
+        <span class="rooster-title">Week ${d.week} — ${d.label}</span>
+        <span style="font-size:11px;color:var(--ink3)">${filled}/4 duo's ingevuld</span>
+      </div>
+      <div class="rooster-body" id="${rid}">
+        ${ROLLEN.map(rol=>{
+          const val=r[rol]||'';
+          return `<div class="duo-row">
+            <span class="duo-naam">${rol}</span>
+            <select class="duo-sel" onchange="saveRooster('${d.id}','${rol}',this.value)">
+              <option value="">— Geen —</option>
+              ${SJTENDAORS.map(s=>`<option value="${s}"${val===s?' selected':''}>${s}</option>`).join('')}
+            </select>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function saveRooster(dagId,rol,val){
+  if(!rooster[dagId])rooster[dagId]={};
+  rooster[dagId][rol]=val;
+  fbSet('rooster_'+dagId, rooster[dagId]);
+  const r=rooster[dagId];
+  const filled=ROLLEN.filter(x=>r[x]).length;
+  const hdr=document.querySelector(`#rb_${dagId}`).previousElementSibling.querySelector('span:last-child');
+  if(hdr)hdr.textContent=filled+'/4 duo\'s ingevuld';
+}
+
+function openModal(id){document.getElementById(id).classList.add('show');}
+function closeModal(id){document.getElementById(id).classList.remove('show');}
+function doReset(){addrs.forEach(a=>a.status='todo');closeModal('modal-reset');save();render();}
+function doWipe(){addrs=[];rooster={};closeModal('modal-wipe');save();renderRooster();render();}
+
+let totaalFilter='done';
+function setTotaalFilter(f){
+  totaalFilter=f;
+  ['done','away','both'].forEach(x=>{
+    const b=document.getElementById('tf-'+x);
+    if(!b)return;
+    b.className='pill'+(x===f?' on':'');
+    if(x==='done'&&f==='done')b.className='pill gon';
+    if(x==='away'&&f==='away')b.className='pill oon';
+  });
+  renderTotaal();
+}
+function renderTotaal(){
+  const tot=addrs.length;
+  const done=addrs.filter(a=>a.status==='done').length;
+  const away=addrs.filter(a=>a.status==='away').length;
+  const todo=tot-done-away;
+  const te=document.getElementById('t-tot');if(te)te.textContent=tot;
+  const de=document.getElementById('t-done');if(de)de.textContent=done;
+  const ae=document.getElementById('t-away');if(ae)ae.textContent=away;
+  const oe=document.getElementById('t-todo');if(oe)oe.textContent=todo;
+
+  // Rol statistieken
+  const rolBars=document.getElementById('rol-bars');
+  if(rolBars){
+    const rollen=['Kaptejn','Luutenant','Veendrig','Sikkretaoris'];
+    const rolData=rollen.map(rol=>{
+      const rolAddrs=addrs.filter(a=>a.duo===rol);
+      return {
+        rol,
+        gedaan: rolAddrs.filter(a=>a.status==='done').length,
+        niet:   rolAddrs.filter(a=>a.status==='away').length,
+        totaal: rolAddrs.length
+      };
+    });
+    const maxTot=Math.max(...rolData.map(r=>r.totaal),1);
+    // sorteer op gedaan desc
+    rolData.sort((a,b)=>b.gedaan-a.gedaan);
+    rolBars.innerHTML=rolData.map((r,i)=>{
+      const pctDone=Math.round(r.gedaan/maxTot*100);
+      const pctAway=Math.round(r.niet/maxTot*100);
+      const medal=i===0&&r.gedaan>0?'🏆 ':'';
+      return `<div style="margin-bottom:10px">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px">
+          <span style="font-size:14px;font-weight:600;color:#1a2a5e">${medal}${r.rol}</span>
+          <span style="font-size:12px;color:#8090b8">${r.gedaan} ged. · ${r.niet} n.t. · ${r.totaal} tot.</span>
+        </div>
+        <div style="height:10px;background:#f0f4ff;border-radius:5px;overflow:hidden;display:flex">
+          <div style="width:${pctDone}%;background:#2e7d3c;border-radius:5px 0 0 5px;transition:width .4s"></div>
+          <div style="width:${pctAway}%;background:#c05c1a"></div>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  const showDone=totaalFilter==='done'||totaalFilter==='both';
+  const showAway=totaalFilter==='away'||totaalFilter==='both';
+  const vis=addrs.filter(a=>(showDone&&a.status==='done')||(showAway&&a.status==='away'));
+
+  const cont=document.getElementById('totaal-list');
+  if(!cont)return;
+  if(!vis.length){cont.innerHTML='<div class="empty">Nog geen afgeronde adressen.</div>';return;}
+
+  // groepeer op straat
+  const strGroups={};
+  vis.forEach(a=>{
+    const parts=a.adres.split(' ');
+    const st=parts.length>1?parts.slice(0,-1).join(' '):parts[0];
+    if(!strGroups[st])strGroups[st]=[];
+    strGroups[st].push(a);
+  });
+  const stKeys=Object.keys(strGroups).sort((a,b)=>a.localeCompare(b,'nl'));
+  cont.innerHTML=stKeys.map(st=>{
+    const items=strGroups[st];
+    const doneC=items.filter(x=>x.status==='done').length;
+    const awayC=items.filter(x=>x.status==='away').length;
+    const gid='tg_'+st.replace(/\W/g,'_');
+    return `<div class="street-group">
+      <div class="street-hdr" onclick="tg('${gid}')">
+        <span class="street-nm">${st}</span>
+        <span class="street-prog" style="display:flex;gap:6px">
+          ${doneC?`<span style="color:var(--green)">${doneC} ged.</span>`:''}
+          ${awayC?`<span style="color:var(--orange)">${awayC} n.t.</span>`:''}
+        </span>
+        <span class="chev open" id="ch_${gid}">▶</span>
+      </div>
+      <div class="addr-list open" id="${gid}">
+        ${items.map(a=>`<div class="addr-row">
+          <div style="flex:1">
+            <span class="addr-txt">${a.adres}</span>
+            ${a.duo?`<span style="font-size:11px;color:var(--ink3);margin-left:5px">${a.duo}</span>`:''}
+          </div>
+          <span class="sb ${a.status==='done'?'done':'away'}" style="pointer-events:none">
+            ${a.status==='done'?'✓ Gedaan':'⌀ Niet thuis'}
+          </span>
+        </div>`).join('')}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── FIREBASE ──────────────────────────────────────────────────────────
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import { getFirestore, doc, setDoc, deleteDoc, collection, onSnapshot, writeBatch } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCC03Rcm6ZbCa6hzjA8IUgp8tqDY0v4lzI",
+  authDomain: "buugele-breusj.firebaseapp.com",
+  projectId: "buugele-breusj",
+  storageBucket: "buugele-breusj.firebasestorage.app",
+  messagingSenderId: "606116375395",
+  appId: "1:606116375395:web:7216b9b30f34a78f40c156"
+};
+
+const app = initializeApp(firebaseConfig);
+const db  = getFirestore(app);
+
+function fbSet(key, data) {
+  setDoc(doc(db, 'buugele', key), data).catch(console.error);
+}
+function fbDel(key) {
+  deleteDoc(doc(db, 'buugele', key)).catch(console.error);
+}
+
+const DEFAULT_ADDRS = [{"id": 1700000000000, "adres": "Achter de Lang Haag 1", "duo": "", "status": "todo"}, {"id": 1700000000001, "adres": "Achter de Lang Haag 2", "duo": "", "status": "todo"}, {"id": 1700000000002, "adres": "Achter de Lang Haag 3", "duo": "", "status": "todo"}, {"id": 1700000000003, "adres": "Achter de Lang Haag 4", "duo": "", "status": "todo"}, {"id": 1700000000004, "adres": "Achter de Lang Haag 5", "duo": "", "status": "todo"}, {"id": 1700000000005, "adres": "Achter de Lang Haag 6", "duo": "", "status": "todo"}, {"id": 1700000000006, "adres": "Achter de Lang Haag 7", "duo": "", "status": "todo"}, {"id": 1700000000007, "adres": "Achter de Lang Haag 8", "duo": "", "status": "todo"}, {"id": 1700000000008, "adres": "Achter de Lang Haag 9", "duo": "", "status": "todo"}, {"id": 1700000000009, "adres": "Achter de Lang Haag 10", "duo": "", "status": "todo"}, {"id": 1700000000010, "adres": "Achter de Lang Haag 11", "duo": "", "status": "todo"}, {"id": 1700000000011, "adres": "Achter de Lang Haag 12", "duo": "", "status": "todo"}, {"id": 1700000000012, "adres": "Achter de Lang Haag 13", "duo": "", "status": "todo"}, {"id": 1700000000013, "adres": "Achter de Lang Haag 14", "duo": "", "status": "todo"}, {"id": 1700000000014, "adres": "Achter de Lang Haag 15", "duo": "", "status": "todo"}, {"id": 1700000000015, "adres": "Achter de Lang Haag 16", "duo": "", "status": "todo"}, {"id": 1700000000016, "adres": "Achter de Lang Haag 17", "duo": "", "status": "todo"}, {"id": 1700000000017, "adres": "Achter de Lang Haag 18", "duo": "", "status": "todo"}, {"id": 1700000000018, "adres": "Achter de Lang Haag 19", "duo": "", "status": "todo"}, {"id": 1700000000019, "adres": "Achter de Lang Haag 20", "duo": "", "status": "todo"}, {"id": 1700000000020, "adres": "Achter de Lang Haag 21", "duo": "", "status": "todo"}, {"id": 1700000000021, "adres": "Achter de Lang Haag 22", "duo": "", "status": "todo"}, {"id": 1700000000022, "adres": "Achter de Lang Haag 23", "duo": "", "status": "todo"}, {"id": 1700000000023, "adres": "Achter de Lang Haag 24", "duo": "", "status": "todo"}, {"id": 1700000000024, "adres": "Achter de Lang Haag 25", "duo": "", "status": "todo"}, {"id": 1700000000025, "adres": "Achter de Lang Haag 26", "duo": "", "status": "todo"}, {"id": 1700000000026, "adres": "Achter de Lang Haag 27", "duo": "", "status": "todo"}, {"id": 1700000000027, "adres": "Achter de Lang Haag 28", "duo": "", "status": "todo"}, {"id": 1700000000028, "adres": "Achter de Lang Haag 29", "duo": "", "status": "todo"}, {"id": 1700000000029, "adres": "Achter de Lang Haag 30", "duo": "", "status": "todo"}, {"id": 1700000000030, "adres": "Achter de Lang Haag 31", "duo": "", "status": "todo"}, {"id": 1700000000031, "adres": "Achter de Lang Haag 32", "duo": "", "status": "todo"}, {"id": 1700000000032, "adres": "Achter de Lang Haag 33", "duo": "", "status": "todo"}, {"id": 1700000000033, "adres": "Achter de Lang Haag 34", "duo": "", "status": "todo"}, {"id": 1700000000034, "adres": "Achter de Lang Haag 35", "duo": "", "status": "todo"}, {"id": 1700000000035, "adres": "Achter de Lang Haag 36", "duo": "", "status": "todo"}, {"id": 1700000000036, "adres": "Achter de Lang Haag 37", "duo": "", "status": "todo"}, {"id": 1700000000037, "adres": "Achter de Lang Haag 38", "duo": "", "status": "todo"}, {"id": 1700000000038, "adres": "Achter de Lang Haag 39", "duo": "", "status": "todo"}, {"id": 1700000000039, "adres": "Achter de Lang Haag 40", "duo": "", "status": "todo"}, {"id": 1700000000040, "adres": "Achter de Lang Haag 41", "duo": "", "status": "todo"}, {"id": 1700000000041, "adres": "Achter de Lang Haag 42", "duo": "", "status": "todo"}, {"id": 1700000000042, "adres": "Achter de Lang Haag 43", "duo": "", "status": "todo"}, {"id": 1700000000043, "adres": "Achter de Lang Haag 44", "duo": "", "status": "todo"}, {"id": 1700000000044, "adres": "Achter de Lang Haag 45", "duo": "", "status": "todo"}, {"id": 1700000000045, "adres": "Achter de Lang Haag 46", "duo": "", "status": "todo"}, {"id": 1700000000046, "adres": "Achter de Lang Haag 47", "duo": "", "status": "todo"}, {"id": 1700000000047, "adres": "Achter de Lang Haag 48", "duo": "", "status": "todo"}, {"id": 1700000000048, "adres": "Achter de Lang Haag 49", "duo": "", "status": "todo"}, {"id": 1700000000049, "adres": "Achter de Lang Haag 50", "duo": "", "status": "todo"}, {"id": 1700000000050, "adres": "Achter de Lang Haag 51", "duo": "", "status": "todo"}, {"id": 1700000000051, "adres": "Achter de Lang Haag 52", "duo": "", "status": "todo"}, {"id": 1700000000052, "adres": "Achter de Lang Haag 53", "duo": "", "status": "todo"}, {"id": 1700000000053, "adres": "Achter de Lang Haag 54", "duo": "", "status": "todo"}, {"id": 1700000000054, "adres": "Achter de Lang Haag 55", "duo": "", "status": "todo"}, {"id": 1700000000055, "adres": "Achter de Lang Haag 56", "duo": "", "status": "todo"}, {"id": 1700000000056, "adres": "Achter de Lang Haag 57", "duo": "", "status": "todo"}, {"id": 1700000000057, "adres": "Achter de Lang Haag 58", "duo": "", "status": "todo"}, {"id": 1700000000058, "adres": "Basterddikkestraat 2", "duo": "", "status": "todo"}, {"id": 1700000000059, "adres": "Basterddikkestraat 4", "duo": "", "status": "todo"}, {"id": 1700000000060, "adres": "Basterddikkestraat 6", "duo": "", "status": "todo"}, {"id": 1700000000061, "adres": "Basterddikkestraat 8", "duo": "", "status": "todo"}, {"id": 1700000000062, "adres": "Basterddikkestraat 10", "duo": "", "status": "todo"}, {"id": 1700000000063, "adres": "Basterddikkestraat 12", "duo": "", "status": "todo"}, {"id": 1700000000064, "adres": "Basterddikkestraat 14", "duo": "", "status": "todo"}, {"id": 1700000000065, "adres": "Basterddikkestraat 16", "duo": "", "status": "todo"}, {"id": 1700000000066, "adres": "Bisschop Eraclesplein 1", "duo": "", "status": "todo"}, {"id": 1700000000067, "adres": "Bisschop Eraclesplein 2", "duo": "", "status": "todo"}, {"id": 1700000000068, "adres": "Bisschop Eraclesplein 3", "duo": "", "status": "todo"}, {"id": 1700000000069, "adres": "Bisschop Eraclesplein 4", "duo": "", "status": "todo"}, {"id": 1700000000070, "adres": "Bisschop Eraclesplein 5", "duo": "", "status": "todo"}, {"id": 1700000000071, "adres": "Bisschop Eraclesplein 6", "duo": "", "status": "todo"}, {"id": 1700000000072, "adres": "Bisschop Eraclesplein 7", "duo": "", "status": "todo"}, {"id": 1700000000073, "adres": "Bisschop Eraclesplein 8", "duo": "", "status": "todo"}, {"id": 1700000000074, "adres": "Bisschop Eraclesplein 9", "duo": "", "status": "todo"}, {"id": 1700000000075, "adres": "Bisschop Eraclesplein 10", "duo": "", "status": "todo"}, {"id": 1700000000076, "adres": "Bisschop Eraclesplein 11", "duo": "", "status": "todo"}, {"id": 1700000000077, "adres": "Bisschop Eraclesplein 12", "duo": "", "status": "todo"}, {"id": 1700000000078, "adres": "Bisschop Eraclesplein 13", "duo": "", "status": "todo"}, {"id": 1700000000079, "adres": "Bisschop Eraclesplein 14", "duo": "", "status": "todo"}, {"id": 1700000000080, "adres": "Bisschop Eraclesplein 15", "duo": "", "status": "todo"}, {"id": 1700000000081, "adres": "Bisschop Eraclesplein 16", "duo": "", "status": "todo"}, {"id": 1700000000082, "adres": "Bisschop Eraclesplein 17", "duo": "", "status": "todo"}, {"id": 1700000000083, "adres": "Bisschop Eraclesplein 18", "duo": "", "status": "todo"}, {"id": 1700000000084, "adres": "Bisschop Eraclesplein 19", "duo": "", "status": "todo"}, {"id": 1700000000085, "adres": "Bisschop Eraclesplein 20", "duo": "", "status": "todo"}, {"id": 1700000000086, "adres": "Bisschop Eraclesplein 21", "duo": "", "status": "todo"}, {"id": 1700000000087, "adres": "Bisschop Eraclesplein 22", "duo": "", "status": "todo"}, {"id": 1700000000088, "adres": "Bisschop Eraclesplein 23", "duo": "", "status": "todo"}, {"id": 1700000000089, "adres": "Bisschop Eraclesplein 24", "duo": "", "status": "todo"}, {"id": 1700000000090, "adres": "Bisschop Eraclesplein 25", "duo": "", "status": "todo"}, {"id": 1700000000091, "adres": "Bisschop Eraclesplein 26", "duo": "", "status": "todo"}, {"id": 1700000000092, "adres": "Bisschop Eraclesplein 27", "duo": "", "status": "todo"}, {"id": 1700000000093, "adres": "Bisschop Eraclesplein 28", "duo": "", "status": "todo"}, {"id": 1700000000094, "adres": "Bisschop Eraclesplein 29", "duo": "", "status": "todo"}, {"id": 1700000000095, "adres": "Breusterstraat 29", "duo": "", "status": "todo"}, {"id": 1700000000096, "adres": "Breusterstraat 31", "duo": "", "status": "todo"}, {"id": 1700000000097, "adres": "Breusterstraat 33", "duo": "", "status": "todo"}, {"id": 1700000000098, "adres": "Breusterstraat 34", "duo": "", "status": "todo"}, {"id": 1700000000099, "adres": "Breusterstraat 35", "duo": "", "status": "todo"}, {"id": 1700000000100, "adres": "Breusterstraat 36", "duo": "", "status": "todo"}, {"id": 1700000000101, "adres": "Breusterstraat 37", "duo": "", "status": "todo"}, {"id": 1700000000102, "adres": "Breusterstraat 38", "duo": "", "status": "todo"}, {"id": 1700000000103, "adres": "Breusterstraat 39", "duo": "", "status": "todo"}, {"id": 1700000000104, "adres": "Breusterstraat 40", "duo": "", "status": "todo"}, {"id": 1700000000105, "adres": "Breusterstraat 41", "duo": "", "status": "todo"}, {"id": 1700000000106, "adres": "Breusterstraat 42", "duo": "", "status": "todo"}, {"id": 1700000000107, "adres": "Breusterstraat 43", "duo": "", "status": "todo"}, {"id": 1700000000108, "adres": "Breusterstraat 44", "duo": "", "status": "todo"}, {"id": 1700000000109, "adres": "Breusterstraat 54", "duo": "", "status": "todo"}, {"id": 1700000000110, "adres": "Breusterstraat 56", "duo": "", "status": "todo"}, {"id": 1700000000111, "adres": "Breusterstraat 58", "duo": "", "status": "todo"}, {"id": 1700000000112, "adres": "Breusterstraat 60", "duo": "", "status": "todo"}, {"id": 1700000000113, "adres": "Breusterstraat 62", "duo": "", "status": "todo"}, {"id": 1700000000114, "adres": "Breusterstraat 64", "duo": "", "status": "todo"}, {"id": 1700000000115, "adres": "Breusterstraat 66", "duo": "", "status": "todo"}, {"id": 1700000000116, "adres": "Breusterhof appartementen", "duo": "", "status": "todo"}, {"id": 1700000000117, "adres": "Breusterweiden 1", "duo": "", "status": "todo"}, {"id": 1700000000118, "adres": "Breusterweiden 2", "duo": "", "status": "todo"}, {"id": 1700000000119, "adres": "Breusterweiden 3", "duo": "", "status": "todo"}, {"id": 1700000000120, "adres": "Breusterweiden 4", "duo": "", "status": "todo"}, {"id": 1700000000121, "adres": "Breusterweiden 5", "duo": "", "status": "todo"}, {"id": 1700000000122, "adres": "Breusterweiden 6", "duo": "", "status": "todo"}, {"id": 1700000000123, "adres": "Breusterweiden 7", "duo": "", "status": "todo"}, {"id": 1700000000124, "adres": "Breusterweiden 8", "duo": "", "status": "todo"}, {"id": 1700000000125, "adres": "Breusterweiden 9", "duo": "", "status": "todo"}, {"id": 1700000000126, "adres": "Breusterweiden 10", "duo": "", "status": "todo"}, {"id": 1700000000127, "adres": "Breusterweiden 11", "duo": "", "status": "todo"}, {"id": 1700000000128, "adres": "Breusterweiden 12", "duo": "", "status": "todo"}, {"id": 1700000000129, "adres": "Breusterweiden 13", "duo": "", "status": "todo"}, {"id": 1700000000130, "adres": "Breusterweiden 14", "duo": "", "status": "todo"}, {"id": 1700000000131, "adres": "Breusterweiden 15", "duo": "", "status": "todo"}, {"id": 1700000000132, "adres": "Breusterweiden 16", "duo": "", "status": "todo"}, {"id": 1700000000133, "adres": "Breusterweiden 17", "duo": "", "status": "todo"}, {"id": 1700000000134, "adres": "Breusterweiden 18", "duo": "", "status": "todo"}, {"id": 1700000000135, "adres": "Breusterweiden 19", "duo": "", "status": "todo"}, {"id": 1700000000136, "adres": "Breusterweiden 20", "duo": "", "status": "todo"}, {"id": 1700000000137, "adres": "Breusterweiden 21", "duo": "", "status": "todo"}, {"id": 1700000000138, "adres": "Breusterweiden 22", "duo": "", "status": "todo"}, {"id": 1700000000139, "adres": "Breusterweiden 23", "duo": "", "status": "todo"}, {"id": 1700000000140, "adres": "Breusterweiden 24", "duo": "", "status": "todo"}, {"id": 1700000000141, "adres": "Breusterweiden 25", "duo": "", "status": "todo"}, {"id": 1700000000142, "adres": "Breusterweiden 26", "duo": "", "status": "todo"}, {"id": 1700000000143, "adres": "Breusterweiden 27", "duo": "", "status": "todo"}, {"id": 1700000000144, "adres": "Breusterweiden 28", "duo": "", "status": "todo"}, {"id": 1700000000145, "adres": "Breusterweiden 29", "duo": "", "status": "todo"}, {"id": 1700000000146, "adres": "Breusterweiden 30", "duo": "", "status": "todo"}, {"id": 1700000000147, "adres": "Breusterweiden 31", "duo": "", "status": "todo"}, {"id": 1700000000148, "adres": "Breusterweiden 32", "duo": "", "status": "todo"}, {"id": 1700000000149, "adres": "Breusterweiden 33", "duo": "", "status": "todo"}, {"id": 1700000000150, "adres": "Breusterweiden 34", "duo": "", "status": "todo"}, {"id": 1700000000151, "adres": "Breusterweiden 35", "duo": "", "status": "todo"}, {"id": 1700000000152, "adres": "Breusterweiden 36", "duo": "", "status": "todo"}, {"id": 1700000000153, "adres": "Breusterweiden 37", "duo": "", "status": "todo"}, {"id": 1700000000154, "adres": "Breusterweiden 38", "duo": "", "status": "todo"}, {"id": 1700000000155, "adres": "Breusterweiden 39", "duo": "", "status": "todo"}, {"id": 1700000000156, "adres": "Breusterweiden 40", "duo": "", "status": "todo"}, {"id": 1700000000157, "adres": "Bron appartementen", "duo": "", "status": "todo"}, {"id": 1700000000158, "adres": "Burgermeester Lambertstraat 1", "duo": "", "status": "todo"}, {"id": 1700000000159, "adres": "Burgermeester Lambertstraat 2", "duo": "", "status": "todo"}, {"id": 1700000000160, "adres": "Burgermeester Lambertstraat 3", "duo": "", "status": "todo"}, {"id": 1700000000161, "adres": "Burgermeester Lambertstraat 4", "duo": "", "status": "todo"}, {"id": 1700000000162, "adres": "Burgermeester Lambertstraat 5", "duo": "", "status": "todo"}, {"id": 1700000000163, "adres": "Burgermeester Lambertstraat 6", "duo": "", "status": "todo"}, {"id": 1700000000164, "adres": "Burgermeester Lambertstraat 7", "duo": "", "status": "todo"}, {"id": 1700000000165, "adres": "Burgermeester Lambertstraat 8", "duo": "", "status": "todo"}, {"id": 1700000000166, "adres": "Burgermeester Lambertstraat 9", "duo": "", "status": "todo"}, {"id": 1700000000167, "adres": "Burgermeester Lambertstraat 10", "duo": "", "status": "todo"}, {"id": 1700000000168, "adres": "Burgermeester Lambertstraat 11", "duo": "", "status": "todo"}, {"id": 1700000000169, "adres": "Burgermeester Lambertstraat 12", "duo": "", "status": "todo"}, {"id": 1700000000170, "adres": "Burgermeester Lambertstraat 13", "duo": "", "status": "todo"}, {"id": 1700000000171, "adres": "Burgermeester Lambertstraat 14", "duo": "", "status": "todo"}, {"id": 1700000000172, "adres": "Burgermeester Lambertstraat 15", "duo": "", "status": "todo"}, {"id": 1700000000173, "adres": "Burgermeester Lambertstraat 16", "duo": "", "status": "todo"}, {"id": 1700000000174, "adres": "Burgermeester Lambertstraat 17", "duo": "", "status": "todo"}, {"id": 1700000000175, "adres": "Burgermeester Lambertstraat 18", "duo": "", "status": "todo"}, {"id": 1700000000176, "adres": "Burgermeester Lambertstraat 19", "duo": "", "status": "todo"}, {"id": 1700000000177, "adres": "Burgermeester Lambertstraat 20", "duo": "", "status": "todo"}, {"id": 1700000000178, "adres": "Burgermeester Lambertstraat 21", "duo": "", "status": "todo"}, {"id": 1700000000179, "adres": "Burgermeester Lambertstraat 22", "duo": "", "status": "todo"}, {"id": 1700000000180, "adres": "Burgermeester Lambertstraat 23", "duo": "", "status": "todo"}, {"id": 1700000000181, "adres": "Burgermeester Lambertstraat 24", "duo": "", "status": "todo"}, {"id": 1700000000182, "adres": "Burgermeester Lambertstraat 25", "duo": "", "status": "todo"}, {"id": 1700000000183, "adres": "Burgermeester Lambertstraat 26", "duo": "", "status": "todo"}, {"id": 1700000000184, "adres": "Burgermeester Lambertstraat 27", "duo": "", "status": "todo"}, {"id": 1700000000185, "adres": "Burgermeester Lambertstraat 28", "duo": "", "status": "todo"}, {"id": 1700000000186, "adres": "Burgermeester Lambertstraat 29", "duo": "", "status": "todo"}, {"id": 1700000000187, "adres": "Burgermeester Lambertstraat 30", "duo": "", "status": "todo"}, {"id": 1700000000188, "adres": "Burgermeester Lambertstraat 31", "duo": "", "status": "todo"}, {"id": 1700000000189, "adres": "Burgermeester Lambertstraat 32", "duo": "", "status": "todo"}, {"id": 1700000000190, "adres": "Burgermeester Lambertstraat 33", "duo": "", "status": "todo"}, {"id": 1700000000191, "adres": "Burgermeester Lambertstraat 34", "duo": "", "status": "todo"}, {"id": 1700000000192, "adres": "Burgermeester Lambertstraat 35", "duo": "", "status": "todo"}, {"id": 1700000000193, "adres": "Burgermeester Lambertstraat 36", "duo": "", "status": "todo"}, {"id": 1700000000194, "adres": "Burgermeester Lambertstraat 37", "duo": "", "status": "todo"}, {"id": 1700000000195, "adres": "Burgermeester Lambertstraat 38", "duo": "", "status": "todo"}, {"id": 1700000000196, "adres": "Burgermeester Lambertstraat 39", "duo": "", "status": "todo"}, {"id": 1700000000197, "adres": "Burgermeester Lambertstraat 40", "duo": "", "status": "todo"}, {"id": 1700000000198, "adres": "Burgermeester Lambertstraat 41", "duo": "", "status": "todo"}, {"id": 1700000000199, "adres": "Burgermeester Lambertstraat 42", "duo": "", "status": "todo"}, {"id": 1700000000200, "adres": "Burgermeester Lambertstraat 43", "duo": "", "status": "todo"}, {"id": 1700000000201, "adres": "Burgermeester Lambertstraat 44", "duo": "", "status": "todo"}, {"id": 1700000000202, "adres": "Burgermeester Lambertstraat 45", "duo": "", "status": "todo"}, {"id": 1700000000203, "adres": "Burgermeester Lambertstraat 46", "duo": "", "status": "todo"}, {"id": 1700000000204, "adres": "Cramignonstraat 2", "duo": "", "status": "todo"}, {"id": 1700000000205, "adres": "Cramignonstraat 4", "duo": "", "status": "todo"}, {"id": 1700000000206, "adres": "Cramignonstraat 6", "duo": "", "status": "todo"}, {"id": 1700000000207, "adres": "Cramignonstraat 7", "duo": "", "status": "todo"}, {"id": 1700000000208, "adres": "Cramignonstraat 8", "duo": "", "status": "todo"}, {"id": 1700000000209, "adres": "Cramignonstraat 9", "duo": "", "status": "todo"}, {"id": 1700000000210, "adres": "Cramignonstraat 11", "duo": "", "status": "todo"}, {"id": 1700000000211, "adres": "Cramignonstraat 13", "duo": "", "status": "todo"}, {"id": 1700000000212, "adres": "Cramignonstraat 15", "duo": "", "status": "todo"}, {"id": 1700000000213, "adres": "Cramignonstraat 17", "duo": "", "status": "todo"}, {"id": 1700000000214, "adres": "Cramignonstraat 19", "duo": "", "status": "todo"}, {"id": 1700000000215, "adres": "Cramignonstraat 21", "duo": "", "status": "todo"}, {"id": 1700000000216, "adres": "Cramignonstraat 23", "duo": "", "status": "todo"}, {"id": 1700000000217, "adres": "Cramignonstraat 25", "duo": "", "status": "todo"}, {"id": 1700000000218, "adres": "Cramignonstraat 27", "duo": "", "status": "todo"}, {"id": 1700000000219, "adres": "Cramignonstraat 29", "duo": "", "status": "todo"}, {"id": 1700000000220, "adres": "De Bak 1", "duo": "", "status": "todo"}, {"id": 1700000000221, "adres": "De Bak 2", "duo": "", "status": "todo"}, {"id": 1700000000222, "adres": "De Bak 3", "duo": "", "status": "todo"}, {"id": 1700000000223, "adres": "De Bak 4", "duo": "", "status": "todo"}, {"id": 1700000000224, "adres": "De Bak 5", "duo": "", "status": "todo"}, {"id": 1700000000225, "adres": "De Bak 6", "duo": "", "status": "todo"}, {"id": 1700000000226, "adres": "De Bak 7", "duo": "", "status": "todo"}, {"id": 1700000000227, "adres": "De Bak 8", "duo": "", "status": "todo"}, {"id": 1700000000228, "adres": "De Bak 9", "duo": "", "status": "todo"}, {"id": 1700000000229, "adres": "De Bak 10", "duo": "", "status": "todo"}, {"id": 1700000000230, "adres": "De Bak 11", "duo": "", "status": "todo"}, {"id": 1700000000231, "adres": "De Bak 12", "duo": "", "status": "todo"}, {"id": 1700000000232, "adres": "De Bak 13", "duo": "", "status": "todo"}, {"id": 1700000000233, "adres": "De Bak 14", "duo": "", "status": "todo"}, {"id": 1700000000234, "adres": "De Bak 15", "duo": "", "status": "todo"}, {"id": 1700000000235, "adres": "De Bak 16", "duo": "", "status": "todo"}, {"id": 1700000000236, "adres": "De Bak 17", "duo": "", "status": "todo"}, {"id": 1700000000237, "adres": "De Bak 18", "duo": "", "status": "todo"}, {"id": 1700000000238, "adres": "De Bak 19", "duo": "", "status": "todo"}, {"id": 1700000000239, "adres": "De Bak 20", "duo": "", "status": "todo"}, {"id": 1700000000240, "adres": "De Bak 21", "duo": "", "status": "todo"}, {"id": 1700000000241, "adres": "De Bak 22", "duo": "", "status": "todo"}, {"id": 1700000000242, "adres": "De Bak 23", "duo": "", "status": "todo"}, {"id": 1700000000243, "adres": "De Bak 24", "duo": "", "status": "todo"}, {"id": 1700000000244, "adres": "De Bak 25", "duo": "", "status": "todo"}, {"id": 1700000000245, "adres": "De Bak 26", "duo": "", "status": "todo"}, {"id": 1700000000246, "adres": "De Bak 27", "duo": "", "status": "todo"}, {"id": 1700000000247, "adres": "De Bak 28", "duo": "", "status": "todo"}, {"id": 1700000000248, "adres": "De Bak 29", "duo": "", "status": "todo"}, {"id": 1700000000249, "adres": "De Bak 30", "duo": "", "status": "todo"}, {"id": 1700000000250, "adres": "De Bak 31", "duo": "", "status": "todo"}, {"id": 1700000000251, "adres": "De Bak 32", "duo": "", "status": "todo"}, {"id": 1700000000252, "adres": "De Bak 33", "duo": "", "status": "todo"}, {"id": 1700000000253, "adres": "De Bak 34", "duo": "", "status": "todo"}, {"id": 1700000000254, "adres": "De Bak 35", "duo": "", "status": "todo"}, {"id": 1700000000255, "adres": "De Bak 36", "duo": "", "status": "todo"}, {"id": 1700000000256, "adres": "De Bak 37", "duo": "", "status": "todo"}, {"id": 1700000000257, "adres": "De Bak 38", "duo": "", "status": "todo"}, {"id": 1700000000258, "adres": "De Bak 39", "duo": "", "status": "todo"}, {"id": 1700000000259, "adres": "De Bak 40", "duo": "", "status": "todo"}, {"id": 1700000000260, "adres": "De Bak 41", "duo": "", "status": "todo"}, {"id": 1700000000261, "adres": "Emmastraat 2", "duo": "", "status": "todo"}, {"id": 1700000000262, "adres": "Emmastraat 4", "duo": "", "status": "todo"}, {"id": 1700000000263, "adres": "Emmastraat 6", "duo": "", "status": "todo"}, {"id": 1700000000264, "adres": "Emmastraat 7", "duo": "", "status": "todo"}, {"id": 1700000000265, "adres": "Emmastraat 8", "duo": "", "status": "todo"}, {"id": 1700000000266, "adres": "Emmastraat 9", "duo": "", "status": "todo"}, {"id": 1700000000267, "adres": "Emmastraat 10", "duo": "", "status": "todo"}, {"id": 1700000000268, "adres": "Emmastraat 11", "duo": "", "status": "todo"}, {"id": 1700000000269, "adres": "Emmastraat 12", "duo": "", "status": "todo"}, {"id": 1700000000270, "adres": "Emmastraat 13", "duo": "", "status": "todo"}, {"id": 1700000000271, "adres": "Emmastraat 14", "duo": "", "status": "todo"}, {"id": 1700000000272, "adres": "Emmastraat 15", "duo": "", "status": "todo"}, {"id": 1700000000273, "adres": "Emmastraat 16", "duo": "", "status": "todo"}, {"id": 1700000000274, "adres": "Emmastraat 17", "duo": "", "status": "todo"}, {"id": 1700000000275, "adres": "Emmastraat 18", "duo": "", "status": "todo"}, {"id": 1700000000276, "adres": "Emmastraat 19", "duo": "", "status": "todo"}, {"id": 1700000000277, "adres": "Emmastraat 20", "duo": "", "status": "todo"}, {"id": 1700000000278, "adres": "Emmastraat 21", "duo": "", "status": "todo"}, {"id": 1700000000279, "adres": "Emmastraat 22", "duo": "", "status": "todo"}, {"id": 1700000000280, "adres": "Emmastraat 23", "duo": "", "status": "todo"}, {"id": 1700000000281, "adres": "Emmastraat 24", "duo": "", "status": "todo"}, {"id": 1700000000282, "adres": "Emmastraat 25", "duo": "", "status": "todo"}, {"id": 1700000000283, "adres": "Emmastraat 26", "duo": "", "status": "todo"}, {"id": 1700000000284, "adres": "Emmastraat 27", "duo": "", "status": "todo"}, {"id": 1700000000285, "adres": "Emmastraat 28", "duo": "", "status": "todo"}, {"id": 1700000000286, "adres": "Emmastraat 29", "duo": "", "status": "todo"}, {"id": 1700000000287, "adres": "Emmastraat 30", "duo": "", "status": "todo"}, {"id": 1700000000288, "adres": "Emmastraat 31", "duo": "", "status": "todo"}, {"id": 1700000000289, "adres": "Emmastraat 32", "duo": "", "status": "todo"}, {"id": 1700000000290, "adres": "Emmastraat 33", "duo": "", "status": "todo"}, {"id": 1700000000291, "adres": "Emmastraat 34", "duo": "", "status": "todo"}, {"id": 1700000000292, "adres": "Emmastraat 35", "duo": "", "status": "todo"}, {"id": 1700000000293, "adres": "Emmastraat 36", "duo": "", "status": "todo"}, {"id": 1700000000294, "adres": "Emmastraat 37", "duo": "", "status": "todo"}, {"id": 1700000000295, "adres": "Emmastraat 38", "duo": "", "status": "todo"}, {"id": 1700000000296, "adres": "Emmastraat 39", "duo": "", "status": "todo"}, {"id": 1700000000297, "adres": "Emmastraat 40", "duo": "", "status": "todo"}, {"id": 1700000000298, "adres": "Emmastraat 41", "duo": "", "status": "todo"}, {"id": 1700000000299, "adres": "Emmastraat 42", "duo": "", "status": "todo"}, {"id": 1700000000300, "adres": "Emmastraat 43", "duo": "", "status": "todo"}, {"id": 1700000000301, "adres": "Emmastraat 44", "duo": "", "status": "todo"}, {"id": 1700000000302, "adres": "Emmastraat 45", "duo": "", "status": "todo"}, {"id": 1700000000303, "adres": "Emmastraat 46", "duo": "", "status": "todo"}, {"id": 1700000000304, "adres": "Emmastraat 47", "duo": "", "status": "todo"}, {"id": 1700000000305, "adres": "Emmastraat 48", "duo": "", "status": "todo"}, {"id": 1700000000306, "adres": "Emmastraat 49", "duo": "", "status": "todo"}, {"id": 1700000000307, "adres": "Emmastraat 50", "duo": "", "status": "todo"}, {"id": 1700000000308, "adres": "Emmastraat 51", "duo": "", "status": "todo"}, {"id": 1700000000309, "adres": "Emmastraat 52", "duo": "", "status": "todo"}, {"id": 1700000000310, "adres": "Emmastraat 53", "duo": "", "status": "todo"}, {"id": 1700000000311, "adres": "Emmastraat 54", "duo": "", "status": "todo"}, {"id": 1700000000312, "adres": "Emmastraat 55", "duo": "", "status": "todo"}, {"id": 1700000000313, "adres": "Emmastraat 56", "duo": "", "status": "todo"}, {"id": 1700000000314, "adres": "Emmastraat 57", "duo": "", "status": "todo"}, {"id": 1700000000315, "adres": "Emmastraat 58", "duo": "", "status": "todo"}, {"id": 1700000000316, "adres": "Emmastraat 59", "duo": "", "status": "todo"}, {"id": 1700000000317, "adres": "Emmastraat 60", "duo": "", "status": "todo"}, {"id": 1700000000318, "adres": "Emmastraat 62", "duo": "", "status": "todo"}, {"id": 1700000000319, "adres": "Emmastraat 64", "duo": "", "status": "todo"}, {"id": 1700000000320, "adres": "Emmastraat 66", "duo": "", "status": "todo"}, {"id": 1700000000321, "adres": "Emmastraat 68", "duo": "", "status": "todo"}, {"id": 1700000000322, "adres": "Emmastraat 70", "duo": "", "status": "todo"}, {"id": 1700000000323, "adres": "Emmastraat 72", "duo": "", "status": "todo"}, {"id": 1700000000324, "adres": "Emmastraat 74", "duo": "", "status": "todo"}, {"id": 1700000000325, "adres": "Emmastraat 76", "duo": "", "status": "todo"}, {"id": 1700000000326, "adres": "Emmastraat 78", "duo": "", "status": "todo"}, {"id": 1700000000327, "adres": "Emmastraat 80", "duo": "", "status": "todo"}, {"id": 1700000000328, "adres": "Emmastraat 82", "duo": "", "status": "todo"}, {"id": 1700000000329, "adres": "Emmastraat 84", "duo": "", "status": "todo"}, {"id": 1700000000330, "adres": "Emmastraat 86", "duo": "", "status": "todo"}, {"id": 1700000000331, "adres": "Emmastraat 88", "duo": "", "status": "todo"}, {"id": 1700000000332, "adres": "Hubert Smeetsstraat 5", "duo": "", "status": "todo"}, {"id": 1700000000333, "adres": "Hubert Smeetsstraat 7", "duo": "", "status": "todo"}, {"id": 1700000000334, "adres": "Hubert Smeetsstraat 9", "duo": "", "status": "todo"}, {"id": 1700000000335, "adres": "Hubert Smeetsstraat 11", "duo": "", "status": "todo"}, {"id": 1700000000336, "adres": "Hubert Smeetsstraat 12", "duo": "", "status": "todo"}, {"id": 1700000000337, "adres": "Hubert Smeetsstraat 13", "duo": "", "status": "todo"}, {"id": 1700000000338, "adres": "Hubert Smeetsstraat 14", "duo": "", "status": "todo"}, {"id": 1700000000339, "adres": "Hubert Smeetsstraat 15", "duo": "", "status": "todo"}, {"id": 1700000000340, "adres": "Hubert Smeetsstraat 16", "duo": "", "status": "todo"}, {"id": 1700000000341, "adres": "Hubert Smeetsstraat 17", "duo": "", "status": "todo"}, {"id": 1700000000342, "adres": "Hubert Smeetsstraat 18", "duo": "", "status": "todo"}, {"id": 1700000000343, "adres": "Hubert Smeetsstraat 19", "duo": "", "status": "todo"}, {"id": 1700000000344, "adres": "Hubert Smeetsstraat 20", "duo": "", "status": "todo"}, {"id": 1700000000345, "adres": "Hubert Smeetsstraat 21", "duo": "", "status": "todo"}, {"id": 1700000000346, "adres": "Hubert Smeetsstraat 22", "duo": "", "status": "todo"}, {"id": 1700000000347, "adres": "Irenestraat 1", "duo": "", "status": "todo"}, {"id": 1700000000348, "adres": "Irenestraat 2", "duo": "", "status": "todo"}, {"id": 1700000000349, "adres": "Irenestraat 3", "duo": "", "status": "todo"}, {"id": 1700000000350, "adres": "Irenestraat 4", "duo": "", "status": "todo"}, {"id": 1700000000351, "adres": "Irenestraat 5", "duo": "", "status": "todo"}, {"id": 1700000000352, "adres": "Irenestraat 6", "duo": "", "status": "todo"}, {"id": 1700000000353, "adres": "Irenestraat 7", "duo": "", "status": "todo"}, {"id": 1700000000354, "adres": "Irenestraat 8", "duo": "", "status": "todo"}, {"id": 1700000000355, "adres": "Irenestraat 9", "duo": "", "status": "todo"}, {"id": 1700000000356, "adres": "Irenestraat 10", "duo": "", "status": "todo"}, {"id": 1700000000357, "adres": "Irenestraat 11", "duo": "", "status": "todo"}, {"id": 1700000000358, "adres": "Irenestraat 12", "duo": "", "status": "todo"}, {"id": 1700000000359, "adres": "J.P. Sweelinckstraat 1", "duo": "", "status": "todo"}, {"id": 1700000000360, "adres": "J.P. Sweelinckstraat 2", "duo": "", "status": "todo"}, {"id": 1700000000361, "adres": "J.P. Sweelinckstraat 3", "duo": "", "status": "todo"}, {"id": 1700000000362, "adres": "J.P. Sweelinckstraat 4", "duo": "", "status": "todo"}, {"id": 1700000000363, "adres": "J.P. Sweelinckstraat 5", "duo": "", "status": "todo"}, {"id": 1700000000364, "adres": "J.P. Sweelinckstraat 6", "duo": "", "status": "todo"}, {"id": 1700000000365, "adres": "J.P. Sweelinckstraat 7", "duo": "", "status": "todo"}, {"id": 1700000000366, "adres": "J.P. Sweelinckstraat 8", "duo": "", "status": "todo"}, {"id": 1700000000367, "adres": "J.P. Sweelinckstraat 9", "duo": "", "status": "todo"}, {"id": 1700000000368, "adres": "J.P. Sweelinckstraat 10", "duo": "", "status": "todo"}, {"id": 1700000000369, "adres": "J.P. Sweelinckstraat 11", "duo": "", "status": "todo"}, {"id": 1700000000370, "adres": "J.P. Sweelinckstraat 12", "duo": "", "status": "todo"}, {"id": 1700000000371, "adres": "J.P. Sweelinckstraat 13", "duo": "", "status": "todo"}, {"id": 1700000000372, "adres": "J.P. Sweelinckstraat 14", "duo": "", "status": "todo"}, {"id": 1700000000373, "adres": "J.P. Sweelinckstraat 15", "duo": "", "status": "todo"}, {"id": 1700000000374, "adres": "J.P. Sweelinckstraat 16", "duo": "", "status": "todo"}, {"id": 1700000000375, "adres": "J.P. Sweelinckstraat 17", "duo": "", "status": "todo"}, {"id": 1700000000376, "adres": "J.P. Sweelinckstraat 18", "duo": "", "status": "todo"}, {"id": 1700000000377, "adres": "J.P. Sweelinckstraat 19", "duo": "", "status": "todo"}, {"id": 1700000000378, "adres": "J.P. Sweelinckstraat 20", "duo": "", "status": "todo"}, {"id": 1700000000379, "adres": "J.P. Sweelinckstraat 21", "duo": "", "status": "todo"}, {"id": 1700000000380, "adres": "J.P. Sweelinckstraat 22", "duo": "", "status": "todo"}, {"id": 1700000000381, "adres": "J.P. Sweelinckstraat 23", "duo": "", "status": "todo"}, {"id": 1700000000382, "adres": "J.P. Sweelinckstraat 24", "duo": "", "status": "todo"}, {"id": 1700000000383, "adres": "J.P. Sweelinckstraat 25", "duo": "", "status": "todo"}, {"id": 1700000000384, "adres": "J.P. Sweelinckstraat 26", "duo": "", "status": "todo"}, {"id": 1700000000385, "adres": "J.P. Sweelinckstraat 27", "duo": "", "status": "todo"}, {"id": 1700000000386, "adres": "J.P. Sweelinckstraat 28", "duo": "", "status": "todo"}, {"id": 1700000000387, "adres": "J.P. Sweelinckstraat 29", "duo": "", "status": "todo"}, {"id": 1700000000388, "adres": "J.P. Sweelinckstraat 30", "duo": "", "status": "todo"}, {"id": 1700000000389, "adres": "J.P. Sweelinckstraat 31", "duo": "", "status": "todo"}, {"id": 1700000000390, "adres": "J.P. Sweelinckstraat 32", "duo": "", "status": "todo"}, {"id": 1700000000391, "adres": "J.P. Sweelinckstraat 33", "duo": "", "status": "todo"}, {"id": 1700000000392, "adres": "J.P. Sweelinckstraat 34", "duo": "", "status": "todo"}, {"id": 1700000000393, "adres": "J.P. Sweelinckstraat 35", "duo": "", "status": "todo"}, {"id": 1700000000394, "adres": "J.P. Sweelinckstraat 36", "duo": "", "status": "todo"}, {"id": 1700000000395, "adres": "J.P. Sweelinckstraat 38", "duo": "", "status": "todo"}, {"id": 1700000000396, "adres": "J.P. Sweelinckstraat 40", "duo": "", "status": "todo"}, {"id": 1700000000397, "adres": "J.P. Sweelinckstraat 42", "duo": "", "status": "todo"}, {"id": 1700000000398, "adres": "J.P. Sweelinckstraat 44", "duo": "", "status": "todo"}, {"id": 1700000000399, "adres": "J.P. Sweelinckstraat 46", "duo": "", "status": "todo"}, {"id": 1700000000400, "adres": "J.P. Sweelinckstraat 48", "duo": "", "status": "todo"}, {"id": 1700000000401, "adres": "J.P. Sweelinckstraat 50", "duo": "", "status": "todo"}, {"id": 1700000000402, "adres": "J.P. Sweelinckstraat 52", "duo": "", "status": "todo"}, {"id": 1700000000403, "adres": "J.P. Sweelinckstraat 54", "duo": "", "status": "todo"}, {"id": 1700000000404, "adres": "J.S. Bachstraat 26", "duo": "", "status": "todo"}, {"id": 1700000000405, "adres": "J.S. Bachstraat 28", "duo": "", "status": "todo"}, {"id": 1700000000406, "adres": "J.S. Bachstraat 30", "duo": "", "status": "todo"}, {"id": 1700000000407, "adres": "J.S. Bachstraat 32", "duo": "", "status": "todo"}, {"id": 1700000000408, "adres": "J.S. Bachstraat 34", "duo": "", "status": "todo"}, {"id": 1700000000409, "adres": "J.S. Bachstraat 36", "duo": "", "status": "todo"}, {"id": 1700000000410, "adres": "J.S. Bachstraat 38", "duo": "", "status": "todo"}, {"id": 1700000000411, "adres": "J.S. Bachstraat 40", "duo": "", "status": "todo"}, {"id": 1700000000412, "adres": "J.S. Bachstraat 42", "duo": "", "status": "todo"}, {"id": 1700000000413, "adres": "J.S. Bachstraat 44", "duo": "", "status": "todo"}, {"id": 1700000000414, "adres": "J.S. Bachstraat 46", "duo": "", "status": "todo"}, {"id": 1700000000415, "adres": "J.S. Bachstraat 48", "duo": "", "status": "todo"}, {"id": 1700000000416, "adres": "J.S. Bachstraat 50", "duo": "", "status": "todo"}, {"id": 1700000000417, "adres": "J.S. Bachstraat 52", "duo": "", "status": "todo"}, {"id": 1700000000418, "adres": "J.S. Bachstraat 54", "duo": "", "status": "todo"}, {"id": 1700000000419, "adres": "J.S. Bachstraat 56", "duo": "", "status": "todo"}, {"id": 1700000000420, "adres": "J.S. Bachstraat 58", "duo": "", "status": "todo"}, {"id": 1700000000421, "adres": "J.S. Bachstraat 60", "duo": "", "status": "todo"}, {"id": 1700000000422, "adres": "J.S. Bachstraat 62", "duo": "", "status": "todo"}, {"id": 1700000000423, "adres": "J.S. Bachstraat 64", "duo": "", "status": "todo"}, {"id": 1700000000424, "adres": "J.S. Bachstraat 66", "duo": "", "status": "todo"}, {"id": 1700000000425, "adres": "J.S. Bachstraat 68", "duo": "", "status": "todo"}, {"id": 1700000000426, "adres": "J.S. Bachstraat 70", "duo": "", "status": "todo"}, {"id": 1700000000427, "adres": "J.S. Bachstraat 72", "duo": "", "status": "todo"}, {"id": 1700000000428, "adres": "J.S. Bachstraat 74", "duo": "", "status": "todo"}, {"id": 1700000000429, "adres": "Kennedylaan 1", "duo": "", "status": "todo"}, {"id": 1700000000430, "adres": "Kennedylaan 2", "duo": "", "status": "todo"}, {"id": 1700000000431, "adres": "Kennedylaan 3", "duo": "", "status": "todo"}, {"id": 1700000000432, "adres": "Kennedylaan 4", "duo": "", "status": "todo"}, {"id": 1700000000433, "adres": "Kennedylaan 5", "duo": "", "status": "todo"}, {"id": 1700000000434, "adres": "Kennedylaan 6", "duo": "", "status": "todo"}, {"id": 1700000000435, "adres": "Kennedylaan 7", "duo": "", "status": "todo"}, {"id": 1700000000436, "adres": "Kennedylaan 8", "duo": "", "status": "todo"}, {"id": 1700000000437, "adres": "Kennedylaan 9", "duo": "", "status": "todo"}, {"id": 1700000000438, "adres": "Kennedylaan 10", "duo": "", "status": "todo"}, {"id": 1700000000439, "adres": "Kennedylaan 11", "duo": "", "status": "todo"}, {"id": 1700000000440, "adres": "Kennedylaan 12", "duo": "", "status": "todo"}, {"id": 1700000000441, "adres": "Kennedylaan 13", "duo": "", "status": "todo"}, {"id": 1700000000442, "adres": "Kennedylaan 14", "duo": "", "status": "todo"}, {"id": 1700000000443, "adres": "Kennedylaan 15", "duo": "", "status": "todo"}, {"id": 1700000000444, "adres": "Kennedylaan 16", "duo": "", "status": "todo"}, {"id": 1700000000445, "adres": "Kennedylaan 17", "duo": "", "status": "todo"}, {"id": 1700000000446, "adres": "Kennedylaan 18", "duo": "", "status": "todo"}, {"id": 1700000000447, "adres": "Kennedylaan 19", "duo": "", "status": "todo"}, {"id": 1700000000448, "adres": "Kennedylaan 20", "duo": "", "status": "todo"}, {"id": 1700000000449, "adres": "Kennedylaan 21", "duo": "", "status": "todo"}, {"id": 1700000000450, "adres": "Kennedylaan 22", "duo": "", "status": "todo"}, {"id": 1700000000451, "adres": "Kennedylaan 23", "duo": "", "status": "todo"}, {"id": 1700000000452, "adres": "Kennedylaan 24", "duo": "", "status": "todo"}, {"id": 1700000000453, "adres": "Kennedylaan 25", "duo": "", "status": "todo"}, {"id": 1700000000454, "adres": "Kennedylaan 26", "duo": "", "status": "todo"}, {"id": 1700000000455, "adres": "Kennedylaan 27", "duo": "", "status": "todo"}, {"id": 1700000000456, "adres": "Kennedylaan 28", "duo": "", "status": "todo"}, {"id": 1700000000457, "adres": "Kennedylaan 29", "duo": "", "status": "todo"}, {"id": 1700000000458, "adres": "Kennedylaan 30", "duo": "", "status": "todo"}, {"id": 1700000000459, "adres": "Kennedylaan 31", "duo": "", "status": "todo"}, {"id": 1700000000460, "adres": "Kennedylaan 32", "duo": "", "status": "todo"}, {"id": 1700000000461, "adres": "Kennedylaan 33", "duo": "", "status": "todo"}, {"id": 1700000000462, "adres": "Kennedylaan 34", "duo": "", "status": "todo"}, {"id": 1700000000463, "adres": "Kennedylaan 35", "duo": "", "status": "todo"}, {"id": 1700000000464, "adres": "Kennedylaan 36", "duo": "", "status": "todo"}, {"id": 1700000000465, "adres": "Kennedylaan 37", "duo": "", "status": "todo"}, {"id": 1700000000466, "adres": "Kennedylaan 38", "duo": "", "status": "todo"}, {"id": 1700000000467, "adres": "Kennedylaan 39", "duo": "", "status": "todo"}, {"id": 1700000000468, "adres": "Kennedylaan 40", "duo": "", "status": "todo"}, {"id": 1700000000469, "adres": "Kennedylaan 42", "duo": "", "status": "todo"}, {"id": 1700000000470, "adres": "Kennedylaan 44", "duo": "", "status": "todo"}, {"id": 1700000000471, "adres": "Kennedylaan 46", "duo": "", "status": "todo"}, {"id": 1700000000472, "adres": "Kennedylaan 48", "duo": "", "status": "todo"}, {"id": 1700000000473, "adres": "Kennedylaan 50", "duo": "", "status": "todo"}, {"id": 1700000000474, "adres": "Kennedylaan 52", "duo": "", "status": "todo"}, {"id": 1700000000475, "adres": "Kennedylaan 54", "duo": "", "status": "todo"}, {"id": 1700000000476, "adres": "Kennedylaan 56", "duo": "", "status": "todo"}, {"id": 1700000000477, "adres": "Kennedylaan 58", "duo": "", "status": "todo"}, {"id": 1700000000478, "adres": "Kennedylaan 60", "duo": "", "status": "todo"}, {"id": 1700000000479, "adres": "Kennedylaan 62", "duo": "", "status": "todo"}, {"id": 1700000000480, "adres": "Kennedylaan 64", "duo": "", "status": "todo"}, {"id": 1700000000481, "adres": "Kennedylaan 66", "duo": "", "status": "todo"}, {"id": 1700000000482, "adres": "Kennedylaan 68", "duo": "", "status": "todo"}, {"id": 1700000000483, "adres": "Kennedylaan 70", "duo": "", "status": "todo"}, {"id": 1700000000484, "adres": "Klimmerseind 1", "duo": "", "status": "todo"}, {"id": 1700000000485, "adres": "Klimmerseind 2", "duo": "", "status": "todo"}, {"id": 1700000000486, "adres": "Klimmerseind 3", "duo": "", "status": "todo"}, {"id": 1700000000487, "adres": "Klimmerseind 4", "duo": "", "status": "todo"}, {"id": 1700000000488, "adres": "Klimmerseind 5", "duo": "", "status": "todo"}, {"id": 1700000000489, "adres": "Klimmerseind 6", "duo": "", "status": "todo"}, {"id": 1700000000490, "adres": "Klimmerseind 7", "duo": "", "status": "todo"}, {"id": 1700000000491, "adres": "Klimmerseind 8", "duo": "", "status": "todo"}, {"id": 1700000000492, "adres": "Klimmerseind 9", "duo": "", "status": "todo"}, {"id": 1700000000493, "adres": "Klimmerseind 10", "duo": "", "status": "todo"}, {"id": 1700000000494, "adres": "Klimmerseind 11", "duo": "", "status": "todo"}, {"id": 1700000000495, "adres": "Klimmerseind 12", "duo": "", "status": "todo"}, {"id": 1700000000496, "adres": "Klimmerseind 14", "duo": "", "status": "todo"}, {"id": 1700000000497, "adres": "Klimmerseind 16", "duo": "", "status": "todo"}, {"id": 1700000000498, "adres": "Klimmerseind 18", "duo": "", "status": "todo"}, {"id": 1700000000499, "adres": "Klimmerseind 20", "duo": "", "status": "todo"}, {"id": 1700000000500, "adres": "Klimmerseind 22", "duo": "", "status": "todo"}, {"id": 1700000000501, "adres": "Klimmerseind 24", "duo": "", "status": "todo"}, {"id": 1700000000502, "adres": "Klimmerseind 26", "duo": "", "status": "todo"}, {"id": 1700000000503, "adres": "Klimmerseind 28", "duo": "", "status": "todo"}, {"id": 1700000000504, "adres": "Klimmerseind 30", "duo": "", "status": "todo"}, {"id": 1700000000505, "adres": "Klimmerseind 32", "duo": "", "status": "todo"}, {"id": 1700000000506, "adres": "Klimmerseind 34", "duo": "", "status": "todo"}, {"id": 1700000000507, "adres": "Koning Willem-Alexanderstraat appartementen", "duo": "", "status": "todo"}, {"id": 1700000000508, "adres": "Kriekenstraat 1", "duo": "", "status": "todo"}, {"id": 1700000000509, "adres": "Kriekenstraat 2", "duo": "", "status": "todo"}, {"id": 1700000000510, "adres": "Kriekenstraat 3", "duo": "", "status": "todo"}, {"id": 1700000000511, "adres": "Kriekenstraat 4", "duo": "", "status": "todo"}, {"id": 1700000000512, "adres": "Kriekenstraat 5", "duo": "", "status": "todo"}, {"id": 1700000000513, "adres": "Kriekenstraat 6", "duo": "", "status": "todo"}, {"id": 1700000000514, "adres": "Kriekenstraat 7", "duo": "", "status": "todo"}, {"id": 1700000000515, "adres": "Kriekenstraat 8", "duo": "", "status": "todo"}, {"id": 1700000000516, "adres": "Kriekenstraat 9", "duo": "", "status": "todo"}, {"id": 1700000000517, "adres": "Kriekenstraat 10", "duo": "", "status": "todo"}, {"id": 1700000000518, "adres": "Kriekenstraat 11", "duo": "", "status": "todo"}, {"id": 1700000000519, "adres": "Kriekenstraat 12", "duo": "", "status": "todo"}, {"id": 1700000000520, "adres": "Kriekenstraat 13", "duo": "", "status": "todo"}, {"id": 1700000000521, "adres": "Kriekenstraat 14", "duo": "", "status": "todo"}, {"id": 1700000000522, "adres": "Kriekenstraat 15", "duo": "", "status": "todo"}, {"id": 1700000000523, "adres": "Kwetternest zie ter plekke", "duo": "", "status": "todo"}, {"id": 1700000000524, "adres": "M.L. Kingstraat 14", "duo": "", "status": "todo"}, {"id": 1700000000525, "adres": "M.L. Kingstraat 16", "duo": "", "status": "todo"}, {"id": 1700000000526, "adres": "M.L. Kingstraat 18", "duo": "", "status": "todo"}, {"id": 1700000000527, "adres": "M.L. Kingstraat 26", "duo": "", "status": "todo"}, {"id": 1700000000528, "adres": "M.L. Kingstraat 28", "duo": "", "status": "todo"}, {"id": 1700000000529, "adres": "M.L. Kingstraat 30", "duo": "", "status": "todo"}, {"id": 1700000000530, "adres": "M.L. Kingstraat 32", "duo": "", "status": "todo"}, {"id": 1700000000531, "adres": "M.L. Kingstraat 34", "duo": "", "status": "todo"}, {"id": 1700000000532, "adres": "M.L. Kingstraat 35", "duo": "", "status": "todo"}, {"id": 1700000000533, "adres": "M.L. Kingstraat 36", "duo": "", "status": "todo"}, {"id": 1700000000534, "adres": "M.L. Kingstraat 37", "duo": "", "status": "todo"}, {"id": 1700000000535, "adres": "M.L. Kingstraat 38", "duo": "", "status": "todo"}, {"id": 1700000000536, "adres": "M.L. Kingstraat 39", "duo": "", "status": "todo"}, {"id": 1700000000537, "adres": "M.L. Kingstraat 40", "duo": "", "status": "todo"}, {"id": 1700000000538, "adres": "M.L. Kingstraat 41", "duo": "", "status": "todo"}, {"id": 1700000000539, "adres": "M.L. Kingstraat 43", "duo": "", "status": "todo"}, {"id": 1700000000540, "adres": "M.L. Kingstraat 45", "duo": "", "status": "todo"}, {"id": 1700000000541, "adres": "M.L. Kingstraat 47", "duo": "", "status": "todo"}, {"id": 1700000000542, "adres": "M.L. Kingstraat 49", "duo": "", "status": "todo"}, {"id": 1700000000543, "adres": "M.L. Kingstraat 51", "duo": "", "status": "todo"}, {"id": 1700000000544, "adres": "M.L. Kingstraat 53", "duo": "", "status": "todo"}, {"id": 1700000000545, "adres": "M.L. Kingstraat 55", "duo": "", "status": "todo"}, {"id": 1700000000546, "adres": "M.L. Kingstraat 57", "duo": "", "status": "todo"}, {"id": 1700000000547, "adres": "M.L. Kingstraat 59", "duo": "", "status": "todo"}, {"id": 1700000000548, "adres": "M.L. Kingstraat 61", "duo": "", "status": "todo"}, {"id": 1700000000549, "adres": "M.L. Kingstraat 63", "duo": "", "status": "todo"}, {"id": 1700000000550, "adres": "M.L. Kingstraat 65", "duo": "", "status": "todo"}, {"id": 1700000000551, "adres": "M.L. Kingstraat 67", "duo": "", "status": "todo"}, {"id": 1700000000552, "adres": "Monseigneur Nolensstraat 1", "duo": "", "status": "todo"}, {"id": 1700000000553, "adres": "Monseigneur Nolensstraat 2", "duo": "", "status": "todo"}, {"id": 1700000000554, "adres": "Monseigneur Nolensstraat 3", "duo": "", "status": "todo"}, {"id": 1700000000555, "adres": "Mozartstraat 20", "duo": "", "status": "todo"}, {"id": 1700000000556, "adres": "Mozartstraat 22", "duo": "", "status": "todo"}, {"id": 1700000000557, "adres": "Mozartstraat 24", "duo": "", "status": "todo"}, {"id": 1700000000558, "adres": "Mozartstraat 37", "duo": "", "status": "todo"}, {"id": 1700000000559, "adres": "Mozartstraat 39", "duo": "", "status": "todo"}, {"id": 1700000000560, "adres": "Mozartstraat 41", "duo": "", "status": "todo"}, {"id": 1700000000561, "adres": "Mozartstraat 43", "duo": "", "status": "todo"}, {"id": 1700000000562, "adres": "Mozartstraat 45", "duo": "", "status": "todo"}, {"id": 1700000000563, "adres": "Mozartstraat 47", "duo": "", "status": "todo"}, {"id": 1700000000564, "adres": "Mozartstraat 49", "duo": "", "status": "todo"}, {"id": 1700000000565, "adres": "Mozartstraat 51", "duo": "", "status": "todo"}, {"id": 1700000000566, "adres": "Prins Hendrikstraat 1", "duo": "", "status": "todo"}, {"id": 1700000000567, "adres": "Prins Hendrikstraat 2", "duo": "", "status": "todo"}, {"id": 1700000000568, "adres": "Prins Hendrikstraat 3", "duo": "", "status": "todo"}, {"id": 1700000000569, "adres": "Prins Hendrikstraat 4", "duo": "", "status": "todo"}, {"id": 1700000000570, "adres": "Prins Hendrikstraat 5", "duo": "", "status": "todo"}, {"id": 1700000000571, "adres": "Prins Hendrikstraat 6", "duo": "", "status": "todo"}, {"id": 1700000000572, "adres": "Prins Hendrikstraat 7", "duo": "", "status": "todo"}, {"id": 1700000000573, "adres": "Prins Hendrikstraat 8", "duo": "", "status": "todo"}, {"id": 1700000000574, "adres": "Prins Hendrikstraat 9", "duo": "", "status": "todo"}, {"id": 1700000000575, "adres": "Prins Hendrikstraat 10", "duo": "", "status": "todo"}, {"id": 1700000000576, "adres": "Prins Hendrikstraat 11", "duo": "", "status": "todo"}, {"id": 1700000000577, "adres": "Prins Hendrikstraat 12", "duo": "", "status": "todo"}, {"id": 1700000000578, "adres": "Prins Hendrikstraat 13", "duo": "", "status": "todo"}, {"id": 1700000000579, "adres": "Prins Hendrikstraat 14", "duo": "", "status": "todo"}, {"id": 1700000000580, "adres": "Prins Hendrikstraat 15", "duo": "", "status": "todo"}, {"id": 1700000000581, "adres": "Prins Hendrikstraat 16", "duo": "", "status": "todo"}, {"id": 1700000000582, "adres": "Prins Hendrikstraat 17", "duo": "", "status": "todo"}, {"id": 1700000000583, "adres": "Prins Hendrikstraat 18", "duo": "", "status": "todo"}, {"id": 1700000000584, "adres": "Prins Hendrikstraat 19", "duo": "", "status": "todo"}, {"id": 1700000000585, "adres": "Prins Hendrikstraat 20", "duo": "", "status": "todo"}, {"id": 1700000000586, "adres": "Prins Hendrikstraat 21", "duo": "", "status": "todo"}, {"id": 1700000000587, "adres": "Prins Hendrikstraat 22", "duo": "", "status": "todo"}, {"id": 1700000000588, "adres": "Prins Hendrikstraat 23", "duo": "", "status": "todo"}, {"id": 1700000000589, "adres": "Prins Hendrikstraat 24", "duo": "", "status": "todo"}, {"id": 1700000000590, "adres": "Prins Hendrikstraat 25", "duo": "", "status": "todo"}, {"id": 1700000000591, "adres": "Prins Hendrikstraat 26", "duo": "", "status": "todo"}, {"id": 1700000000592, "adres": "Prins Hendrikstraat 27", "duo": "", "status": "todo"}, {"id": 1700000000593, "adres": "Prins Hendrikstraat 28", "duo": "", "status": "todo"}, {"id": 1700000000594, "adres": "Prins Hendrikstraat 30", "duo": "", "status": "todo"}, {"id": 1700000000595, "adres": "Prins Hendrikstraat 32", "duo": "", "status": "todo"}, {"id": 1700000000596, "adres": "Prins Hendrikstraat 34", "duo": "", "status": "todo"}, {"id": 1700000000597, "adres": "Prins Hendrikstraat 36", "duo": "", "status": "todo"}, {"id": 1700000000598, "adres": "Prins Hendrikstraat 38", "duo": "", "status": "todo"}, {"id": 1700000000599, "adres": "Prins Hendrikstraat 40", "duo": "", "status": "todo"}, {"id": 1700000000600, "adres": "Prins Hendrikstraat 42", "duo": "", "status": "todo"}, {"id": 1700000000601, "adres": "Prins Hendrikstraat 44", "duo": "", "status": "todo"}, {"id": 1700000000602, "adres": "Sint Martinusstraat 1", "duo": "", "status": "todo"}, {"id": 1700000000603, "adres": "Sint Martinusstraat 2", "duo": "", "status": "todo"}, {"id": 1700000000604, "adres": "Sint Martinusstraat 3", "duo": "", "status": "todo"}, {"id": 1700000000605, "adres": "Sint Martinusstraat 4", "duo": "", "status": "todo"}, {"id": 1700000000606, "adres": "Sint Martinusstraat 5", "duo": "", "status": "todo"}, {"id": 1700000000607, "adres": "Sint Martinusstraat 6", "duo": "", "status": "todo"}, {"id": 1700000000608, "adres": "Sint Martinusstraat 7", "duo": "", "status": "todo"}, {"id": 1700000000609, "adres": "Sint Martinusstraat 8", "duo": "", "status": "todo"}, {"id": 1700000000610, "adres": "Sint Martinusstraat 9", "duo": "", "status": "todo"}, {"id": 1700000000611, "adres": "Sint Martinusstraat 10", "duo": "", "status": "todo"}, {"id": 1700000000612, "adres": "Sint Martinusstraat 11", "duo": "", "status": "todo"}, {"id": 1700000000613, "adres": "Sint Martinusstraat 12", "duo": "", "status": "todo"}, {"id": 1700000000614, "adres": "Sint Martinusstraat 13", "duo": "", "status": "todo"}, {"id": 1700000000615, "adres": "Sint Martinusstraat 14", "duo": "", "status": "todo"}, {"id": 1700000000616, "adres": "Sint Martinusstraat 15", "duo": "", "status": "todo"}, {"id": 1700000000617, "adres": "Sint Martinusstraat 16", "duo": "", "status": "todo"}, {"id": 1700000000618, "adres": "Sint Martinusstraat 17", "duo": "", "status": "todo"}, {"id": 1700000000619, "adres": "Sint Martinusstraat 18", "duo": "", "status": "todo"}, {"id": 1700000000620, "adres": "Sint Martinusstraat 19", "duo": "", "status": "todo"}, {"id": 1700000000621, "adres": "Sint Martinusstraat 20", "duo": "", "status": "todo"}, {"id": 1700000000622, "adres": "Sint Martinusstraat 21", "duo": "", "status": "todo"}, {"id": 1700000000623, "adres": "Sint Martinusstraat 22", "duo": "", "status": "todo"}, {"id": 1700000000624, "adres": "Sint Martinusstraat 23", "duo": "", "status": "todo"}, {"id": 1700000000625, "adres": "Sint Martinusstraat 24", "duo": "", "status": "todo"}, {"id": 1700000000626, "adres": "Sint Martinusstraat 25", "duo": "", "status": "todo"}, {"id": 1700000000627, "adres": "Sint Martinusstraat 26", "duo": "", "status": "todo"}, {"id": 1700000000628, "adres": "Sint Martinusstraat 27", "duo": "", "status": "todo"}, {"id": 1700000000629, "adres": "Sint Martinusstraat 28", "duo": "", "status": "todo"}, {"id": 1700000000630, "adres": "Sint Martinusstraat 29", "duo": "", "status": "todo"}, {"id": 1700000000631, "adres": "Sint Martinusstraat 30", "duo": "", "status": "todo"}, {"id": 1700000000632, "adres": "Sint Martinusstraat 31", "duo": "", "status": "todo"}, {"id": 1700000000633, "adres": "Sint Martinusstraat 32", "duo": "", "status": "todo"}, {"id": 1700000000634, "adres": "Sint Martinusstraat 33", "duo": "", "status": "todo"}, {"id": 1700000000635, "adres": "Sint Martinusstraat 34", "duo": "", "status": "todo"}, {"id": 1700000000636, "adres": "Sint Martinusstraat 35", "duo": "", "status": "todo"}, {"id": 1700000000637, "adres": "Sint Martinusstraat 36", "duo": "", "status": "todo"}, {"id": 1700000000638, "adres": "Sint Martinusstraat 37", "duo": "", "status": "todo"}, {"id": 1700000000639, "adres": "Sint Martinusstraat 38", "duo": "", "status": "todo"}, {"id": 1700000000640, "adres": "Sint Martinusstraat 39", "duo": "", "status": "todo"}, {"id": 1700000000641, "adres": "Sint Martinusstraat 40", "duo": "", "status": "todo"}, {"id": 1700000000642, "adres": "Sint Martinusstraat 41", "duo": "", "status": "todo"}, {"id": 1700000000643, "adres": "Sint Martinusstraat 42", "duo": "", "status": "todo"}, {"id": 1700000000644, "adres": "Sint Martinusstraat 43", "duo": "", "status": "todo"}, {"id": 1700000000645, "adres": "Sint Martinusstraat 44", "duo": "", "status": "todo"}, {"id": 1700000000646, "adres": "Sint Martinusstraat 45", "duo": "", "status": "todo"}, {"id": 1700000000647, "adres": "Sint Martinusstraat 46", "duo": "", "status": "todo"}, {"id": 1700000000648, "adres": "Sint Martinusstraat 47", "duo": "", "status": "todo"}, {"id": 1700000000649, "adres": "Sint Martinusstraat 48", "duo": "", "status": "todo"}, {"id": 1700000000650, "adres": "Sint Martinusstraat 49", "duo": "", "status": "todo"}, {"id": 1700000000651, "adres": "Sint Martinusstraat 50", "duo": "", "status": "todo"}, {"id": 1700000000652, "adres": "Veldje 4", "duo": "", "status": "todo"}, {"id": 1700000000653, "adres": "Veldje 5", "duo": "", "status": "todo"}, {"id": 1700000000654, "adres": "Veldje 6", "duo": "", "status": "todo"}, {"id": 1700000000655, "adres": "Veldje 7", "duo": "", "status": "todo"}, {"id": 1700000000656, "adres": "Veldje 8", "duo": "", "status": "todo"}, {"id": 1700000000657, "adres": "Veldje 27", "duo": "", "status": "todo"}, {"id": 1700000000658, "adres": "Veldje 28", "duo": "", "status": "todo"}, {"id": 1700000000659, "adres": "Veldje 29", "duo": "", "status": "todo"}, {"id": 1700000000660, "adres": "Veldje 30", "duo": "", "status": "todo"}, {"id": 1700000000661, "adres": "Veldje 31", "duo": "", "status": "todo"}, {"id": 1700000000662, "adres": "Veldje 32", "duo": "", "status": "todo"}, {"id": 1700000000663, "adres": "Veldje 33", "duo": "", "status": "todo"}, {"id": 1700000000664, "adres": "Veldje 34", "duo": "", "status": "todo"}, {"id": 1700000000665, "adres": "Veldje 35", "duo": "", "status": "todo"}, {"id": 1700000000666, "adres": "Veldje 36", "duo": "", "status": "todo"}, {"id": 1700000000667, "adres": "Veldje 37", "duo": "", "status": "todo"}, {"id": 1700000000668, "adres": "Veldje 38", "duo": "", "status": "todo"}, {"id": 1700000000669, "adres": "Veldje 39", "duo": "", "status": "todo"}, {"id": 1700000000670, "adres": "Veldje 40", "duo": "", "status": "todo"}, {"id": 1700000000671, "adres": "Veldje 41", "duo": "", "status": "todo"}, {"id": 1700000000672, "adres": "Veldje 42", "duo": "", "status": "todo"}, {"id": 1700000000673, "adres": "Veldje 43", "duo": "", "status": "todo"}, {"id": 1700000000674, "adres": "Veldje 44", "duo": "", "status": "todo"}, {"id": 1700000000675, "adres": "Veldje 45", "duo": "", "status": "todo"}, {"id": 1700000000676, "adres": "Veldje 46", "duo": "", "status": "todo"}, {"id": 1700000000677, "adres": "Veldje 47", "duo": "", "status": "todo"}, {"id": 1700000000678, "adres": "Veldje 48", "duo": "", "status": "todo"}, {"id": 1700000000679, "adres": "Veldje 49", "duo": "", "status": "todo"}, {"id": 1700000000680, "adres": "Veldje 50", "duo": "", "status": "todo"}, {"id": 1700000000681, "adres": "Veldje 51", "duo": "", "status": "todo"}, {"id": 1700000000682, "adres": "Veldje 52", "duo": "", "status": "todo"}, {"id": 1700000000683, "adres": "Veldje 53", "duo": "", "status": "todo"}, {"id": 1700000000684, "adres": "Veldje 54", "duo": "", "status": "todo"}, {"id": 1700000000685, "adres": "Veldje 55", "duo": "", "status": "todo"}, {"id": 1700000000686, "adres": "Veldje 56", "duo": "", "status": "todo"}, {"id": 1700000000687, "adres": "Veldje 57", "duo": "", "status": "todo"}, {"id": 1700000000688, "adres": "Veldje 58", "duo": "", "status": "todo"}, {"id": 1700000000689, "adres": "Veldje 59", "duo": "", "status": "todo"}, {"id": 1700000000690, "adres": "Veldje 60", "duo": "", "status": "todo"}, {"id": 1700000000691, "adres": "Veldje 65", "duo": "", "status": "todo"}, {"id": 1700000000692, "adres": "Veldje 66", "duo": "", "status": "todo"}, {"id": 1700000000693, "adres": "Veldje 71", "duo": "", "status": "todo"}, {"id": 1700000000694, "adres": "Veldje 72", "duo": "", "status": "todo"}, {"id": 1700000000695, "adres": "Verdistraat 19", "duo": "", "status": "todo"}, {"id": 1700000000696, "adres": "Verdistraat 21", "duo": "", "status": "todo"}, {"id": 1700000000697, "adres": "Verdistraat 23", "duo": "", "status": "todo"}, {"id": 1700000000698, "adres": "Verdistraat 38", "duo": "", "status": "todo"}, {"id": 1700000000699, "adres": "Verdistraat 40", "duo": "", "status": "todo"}, {"id": 1700000000700, "adres": "Verdistraat 42", "duo": "", "status": "todo"}, {"id": 1700000000701, "adres": "Verdistraat 44", "duo": "", "status": "todo"}, {"id": 1700000000702, "adres": "Verdistraat 46", "duo": "", "status": "todo"}, {"id": 1700000000703, "adres": "Verdistraat 48", "duo": "", "status": "todo"}, {"id": 1700000000704, "adres": "Von Geusauplein 1", "duo": "", "status": "todo"}, {"id": 1700000000705, "adres": "Von Geusauplein 2", "duo": "", "status": "todo"}, {"id": 1700000000706, "adres": "Von Geusauplein 3", "duo": "", "status": "todo"}, {"id": 1700000000707, "adres": "Von Geusauplein 4", "duo": "", "status": "todo"}, {"id": 1700000000708, "adres": "Von Geusauplein 5", "duo": "", "status": "todo"}, {"id": 1700000000709, "adres": "Von Geusauplein 6", "duo": "", "status": "todo"}, {"id": 1700000000710, "adres": "Von Geusauplein 7", "duo": "", "status": "todo"}, {"id": 1700000000711, "adres": "Von Geusauplein 8", "duo": "", "status": "todo"}, {"id": 1700000000712, "adres": "Von Geusauplein 9", "duo": "", "status": "todo"}, {"id": 1700000000713, "adres": "Von Geusauplein 10", "duo": "", "status": "todo"}, {"id": 1700000000714, "adres": "Von Geusauplein 11", "duo": "", "status": "todo"}, {"id": 1700000000715, "adres": "Von Geusauplein 12", "duo": "", "status": "todo"}, {"id": 1700000000716, "adres": "Von Geusauplein 13", "duo": "", "status": "todo"}, {"id": 1700000000717, "adres": "Von Geusauplein 14", "duo": "", "status": "todo"}, {"id": 1700000000718, "adres": "Von Geusauplein 15", "duo": "", "status": "todo"}, {"id": 1700000000719, "adres": "Von Geusauplein 16", "duo": "", "status": "todo"}, {"id": 1700000000720, "adres": "Von Geusauplein 17", "duo": "", "status": "todo"}, {"id": 1700000000721, "adres": "Von Geusauplein 18", "duo": "", "status": "todo"}, {"id": 1700000000722, "adres": "Von Geusauplein 19", "duo": "", "status": "todo"}, {"id": 1700000000723, "adres": "Von Geusauplein 20", "duo": "", "status": "todo"}, {"id": 1700000000724, "adres": "Von Geusauplein 21", "duo": "", "status": "todo"}, {"id": 1700000000725, "adres": "Von Geusauplein 22", "duo": "", "status": "todo"}, {"id": 1700000000726, "adres": "Von Geusauplein 23", "duo": "", "status": "todo"}];
+
+async function seedDatabase() {
+  const BATCH_SIZE = 400;
+  for (let i = 0; i < DEFAULT_ADDRS.length; i += BATCH_SIZE) {
+    const batch = writeBatch(db);
+    DEFAULT_ADDRS.slice(i, i + BATCH_SIZE).forEach(item => {
+      batch.set(doc(db, 'buugele', 'addr_' + item.id), item);
+    });
+    await batch.commit();
+  }
+  console.log('Database gevuld met', DEFAULT_ADDRS.length, 'adressen');
+}
+
+function initFirebase() {
+  document.getElementById('hdr-sub').textContent = 'Verbinden...';
+
+  onSnapshot(collection(db, 'buugele'), (snapshot) => {
+    const newAddrs = [];
+    const newRooster = {};
+
+    snapshot.forEach(docSnap => {
+      const key = docSnap.id;
+      const data = docSnap.data();
+      if (key.startsWith('addr_')) {
+        newAddrs.push(data);
+      } else if (key.startsWith('rooster_')) {
+        const dagId = key.replace('rooster_', '');
+        newRooster[dagId] = data;
+      }
+    });
+
+    const isFirst = !dbReady;
+    addrs   = newAddrs;
+    rooster = newRooster;
+    dbReady = true;
+
+    if (isFirst && addrs.length === 0) {
+      seedDatabase();
+      return;
+    }
+
+    populateStraten();
+    renderRooster();
+    render();
+    updateNrs();
+  }, (err) => {
+    console.error(err);
+    document.getElementById('hdr-sub').textContent = 'Verbindingsfout — herlaad de pagina';
+  });
+}
+
+initFirebase();
+</script>
+</body>
+</html>
